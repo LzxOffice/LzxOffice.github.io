@@ -2,4 +2,4 @@
 
 目前有 1 个项目。
 
-[Lzx 随机点名器 v1.0 下载](https://www.now61.com/s/7dgBuR)
+[Lzx 随机点名器 v1.0 下载](https://www.now61.com/s/6ngJHR)
