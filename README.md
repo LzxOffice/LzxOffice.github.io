@@ -1,4 +1,4 @@
-这里是 [Lizhixun](https://luogu.com.cn/user/1030381) 的官网。
+这里是 [LzxOffice](https://github.com/LzxOffice) 的官网。
 
 目前有 1 个项目。
 
