@@ -1,0 +1,315 @@
+<!-- contact.html (联系页) -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LzxOffice - 联系我们</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36BFFA',
+            accent: '#0E2B5C',
+            light: '#E6F7FF',
+            dark: '#0F172A'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .bg-gradient-blue {
+        background: linear-gradient(135deg, #165DFF 0%, #36BFFA 100%);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.2);
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-light text-dark min-h-screen flex flex-col">
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-md transition-all duration-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex items-center space-x-2">
+            <i class="fa fa-rocket text-primary text-2xl"></i>
+            <span class="font-bold text-xl text-accent">LzxOffice</span>
+          </a>
+        </div>
+        
+        <nav class="hidden md:flex space-x-8">
+          <a href="index.html" class="text-dark font-medium hover:text-primary transition-colors">首页</a>
+          <a href="projects.html" class="text-dark font-medium hover:text-primary transition-colors">项目</a>
+          <a href="download.html" class="text-dark font-medium hover:text-primary transition-colors">下载</a>
+          <a href="contact.html" class="text-primary font-medium hover:text-primary/80 transition-colors">联系我们</a>
+        </nav>
+        
+        <div class="md:hidden">
+          <button id="menu-toggle" class="text-dark hover:text-primary focus:outline-none">
+            <i class="fa fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+      <div class="container mx-auto px-4 py-3 space-y-3">
+        <a href="index.html" class="block text-dark font-medium hover:text-primary">首页</a>
+        <a href="projects.html" class="block text-dark font-medium hover:text-primary">项目</a>
+        <a href="download.html" class="block text-dark font-medium hover:text-primary">下载</a>
+        <a href="contact.html" class="block text-primary font-medium">联系我们</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-accent mb-4">联系我们</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">有任何问题或建议？欢迎随时联系我们</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-light rounded-xl p-6 shadow-sm">
+              <h3 class="text-xl font-bold text-accent mb-4">联系方式</h3>
+              <ul class="space-y-4">
+                <li class="flex items-start">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-weixin text-primary text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-900">微信</h4>
+                    <p class="text-gray-600">afolzx120522</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-qq text-primary text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-900">QQ</h4>
+                    <p class="text-gray-600">3887604468</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-envelope text-primary text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-900">邮箱</h4>
+                    <p class="text-gray-600">3887604468@qq.com</p>
+                  </div>
+                </li>
+                <li class="flex items-start">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-comment text-primary text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-gray-900">洛谷私信</h4>
+                    <p class="text-gray-600"><a href="https://www.luogu.com.cn/chat?uid=1030381" class="text-primary hover:underline">点击发送私信</a></p>
+                  </div>
+                </li>
+              </ul>
+              
+              <div class="mt-8">
+                <h3 class="text-xl font-bold text-accent mb-4">工作时间</h3>
+                <ul class="space-y-2 text-gray-600">
+                  <li class="flex justify-between">
+                    <span>工作日:</span>
+                    <span>时间、时长不固定</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>周六:</span>
+                    <span>11:00 - 12:00</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>周日:</span>
+                    <span>14:00 - 17:00</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+    <section class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-2xl font-bold text-accent mb-4">常见问题</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">查看用户常见问题解答</p>
+        </div>
+        
+        <div class="max-w-3xl mx-auto">
+          <div class="space-y-4">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+              <button class="w-full flex justify-between items-center p-6 text-left font-medium text-accent hover:bg-gray-50 transition-colors">
+                <span>随机点名器如何导入自定义名单？</span>
+                <i class="fa fa-chevron-down text-gray-400 transition-transform"></i>
+              </button>
+              <div class="p-6 pt-0 border-t border-gray-100 text-gray-600">
+                <p>在软件主界面点击"导入名单"按钮，选择CSV或TXT格式的文件，文件内容应为每行一个姓名。导入后可以在名单管理中编辑、删除或添加名单。</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+              <button class="w-full flex justify-between items-center p-6 text-left font-medium text-accent hover:bg-gray-50 transition-colors">
+                <span>软件支持哪些操作系统？</span>
+                <i class="fa fa-chevron-down text-gray-400 transition-transform"></i>
+              </button>
+              <div class="p-6 pt-0 border-t border-gray-100 text-gray-600 hidden">
+                <p>目前本工作室所开发的软件支持Windows 7及以上版本。</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+              <button class="w-full flex justify-between items-center p-6 text-left font-medium text-accent hover:bg-gray-50 transition-colors">
+                <span>如何更新软件到最新版本？</span>
+                <i class="fa fa-chevron-down text-gray-400 transition-transform"></i>
+              </button>
+              <div class="p-6 pt-0 border-t border-gray-100 text-gray-600 hidden">
+                <p>目前仅可以到我们的官网下载最新版本进行手动更新。</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+              <button class="w-full flex justify-between items-center p-6 text-left font-medium text-accent hover:bg-gray-50 transition-colors">
+                <span>为什么软件启动后没有声音？</span>
+                <i class="fa fa-chevron-down text-gray-400 transition-transform"></i>
+              </button>
+              <div class="p-6 pt-0 border-t border-gray-100 text-gray-600 hidden">
+                <p>首先请检查您的设备音量是否已打开，并且没有设置为静音。然后在软件设置中检查语音播报功能是否已启用，以及选择的语音引擎是否正确。如果问题仍然存在，请尝试重新启动或下载软件。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-accent text-white py-10">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-bold mb-4">LzxOffice</h3>
+          <p class="text-gray-400 mb-4">专注于开发高质量教育工具的技术团队</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-weixin text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-qq text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fa fa-envelope text-xl"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">快速链接</h3>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+            <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">项目</a></li>
+            <li><a href="download.html" class="text-gray-400 hover:text-white transition-colors">下载</a></li>
+            <li><a href="contact.html" class="text-gray-400 hover:text-white transition-colors">联系我们</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">项目</h3>
+          <ul class="space-y-2">
+            <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">随机点名器</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">更多工具开发中</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">联系我们</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <i class="fa fa-weixin mr-2 text-gray-400"></i>
+              <span class="text-gray-400">afolzx120522</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-qq mr-2 text-gray-400"></i>
+              <span class="text-gray-400">3887604468</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-envelope mr-2 text-gray-400"></i>
+              <span class="text-gray-400">3887604468@qq.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+        <p>&copy; 2025 LzxOffice. 保留所有权利。</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      if (mobileMenu.classList.contains('hidden')) {
+        menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+      } else {
+        menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
+      }
+    });
+    
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('shadow-lg');
+        header.classList.remove('shadow-md');
+      } else {
+        header.classList.remove('shadow-lg');
+        header.classList.add('shadow-md');
+      }
+    });
+    
+    // FAQ 折叠功能
+    const faqButtons = document.querySelectorAll('.bg-white.rounded-xl button');
+    faqButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const content = button.nextElementSibling;
+        const icon = button.querySelector('i');
+        
+        content.classList.toggle('hidden');
+        if (!content.classList.contains('hidden')) {
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          icon.style.transform = 'rotate(0)';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
