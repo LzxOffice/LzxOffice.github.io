@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LzxOffice - 项目</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
   <script>
     tailwind.config = {
@@ -43,6 +43,11 @@
       .card-hover:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.2);
+      }
+      .card-image {
+        height: 192px;
+        object-fit: cover;
+        width: 100%;
       }
     }
   </style>
@@ -96,8 +101,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- 随机点名器卡片 -->
           <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-            <div class="h-48 bg-primary/10 flex items-center justify-center">
-              <i class="fa fa-random text-primary text-6xl"></i>
+            <div class="h-48 bg-primary/10 flex items-center justify-center overflow-hidden">
+              <img src="https://cdn.luogu.com.cn/upload/image_hosting/n452ha1x.png" alt="随机点名器" class="card-image">
             </div>
             <div class="p-6">
               <h3 class="text-xl font-bold text-accent mb-3">随机点名器</h3>
@@ -116,8 +121,8 @@
 
           <!-- 棋类大战卡片 -->
           <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-            <div class="h-48 bg-primary/10 flex items-center justify-center">
-              <i class="fa fa-chess-king text-primary text-6xl"></i>
+            <div class="h-48 bg-primary/10 flex items-center justify-center overflow-hidden">
+              <img src="https://cdn.luogu.com.cn/upload/image_hosting/ekksgrnt.png" alt="棋类大战" class="card-image">
             </div>
             <div class="p-6">
               <h3 class="text-xl font-bold text-accent mb-3">棋类大战</h3>
