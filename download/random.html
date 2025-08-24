@@ -93,11 +93,31 @@
           <p class="text-gray-600 max-w-2xl mx-auto">选择适合您的版本下载</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- 调整布局：新增v1.3（第一行），v1.2、v1.1（第一行），v1.0（第二行单独一列） -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <!-- 新增 v1.3 版本（标注最新） -->
           <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
             <div class="p-4 border-b border-gray-100">
               <div class="flex items-center mb-2">
                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">最新版本</span>
+                <h3 class="text-lg font-bold text-accent">随机点名器 v1.3</h3>
+              </div>
+              <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 max-h-28 overflow-y-auto">
+                <li>重构 UI, 更加具有科技感</li>
+                <li>增加自定义背景功能</li>
+              </ul>
+            </div>
+            <div class="p-4">
+              <a href="https://www.now61.cn/s/1jmjiw" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
+                <i class="fa fa-windows mr-2"></i> 下载 v1.3
+              </a>
+            </div>
+          </div>
+          
+          <!-- 原 v1.2 版本（取消最新标注） -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+            <div class="p-4 border-b border-gray-100">
+              <div class="flex items-center mb-2">
                 <h3 class="text-lg font-bold text-accent">随机点名器 v1.2</h3>
               </div>
               <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 max-h-28 overflow-y-auto">
@@ -108,12 +128,13 @@
               </ul>
             </div>
             <div class="p-4">
-              <a href="https://www.now61.cn/s/95pyHy" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
+              <a href="https://www.now61.cn/s/m43kF5" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
                 <i class="fa fa-windows mr-2"></i> 下载 v1.2
               </a>
             </div>
           </div>
           
+          <!-- 原 v1.1 版本 -->
           <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
             <div class="p-4 border-b border-gray-100">
               <div class="flex items-center mb-2">
@@ -127,15 +148,19 @@
               </ul>
             </div>
             <div class="p-4">
-              <a href="https://www.now61.cn/s/5jKpI7" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
+              <a href="https://www.now61.cn/s/n53oCb" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
                 <i class="fa fa-windows mr-2"></i> 下载 v1.1
               </a>
             </div>
           </div>
-          
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+        </div>
+        
+        <!-- 原 v1.0 版本（单独一行，居中显示） -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover md:col-span-1 mx-auto md:mx-0">
             <div class="p-4 border-b border-gray-100">
               <div class="flex items-center mb-2">
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">初始版本</span>
                 <h3 class="text-lg font-bold text-accent">随机点名器 v1.0</h3>
               </div>
               <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 max-h-28 overflow-y-auto">
@@ -146,7 +171,7 @@
               </ul>
             </div>
             <div class="p-4">
-              <a href="https://www.now61.cn/s/10Kjtw" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
+              <a href="https://www.now61.cn/s/db5Gh0" class="w-full bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center flex items-center justify-center text-sm">
                 <i class="fa fa-windows mr-2"></i> 下载 v1.0
               </a>
             </div>
@@ -155,45 +180,7 @@
       </div>
     </section>
     
-    <section class="py-16 bg-light">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-          <h2 class="text-2xl font-bold text-accent mb-4">系统要求</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">确保您的设备满足软件运行要求</p>
-        </div>
-    
-        <div class="max-w-md mx-auto">
-          <div class="bg-white rounded-xl p-6 shadow-sm">
-            <h3 class="text-lg font-bold text-accent mb-4">Windows 系统</h3>
-            <ul class="space-y-3 text-gray-600">
-              <li class="flex items-start">
-                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <span>Windows 7 或更高版本</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <span>1GHz 处理器或更高</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <span>512MB RAM</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <span>100MB 可用硬盘空间</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                <span>声卡和扬声器</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="bg-accent text-white py-10">
+     <footer class="bg-accent text-white py-10">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
@@ -276,9 +263,8 @@
       } else {
         header.classList.remove('shadow-lg');
         header.classList.add('shadow-md');
-      }
-    });
+      });
   </script>
 </body>
-</html>
-
+</html>  
+  
