@@ -1,3 +1,1 @@
-这里是 [`LzxOffice`](https://github.com/LzxOffice) 官网的 `github` 存储库。
-
-网址链接为 `lzxoffice.github.io`
+LzxOffice 官网正在更新中，有事请联系微信 `afolzx120522`.
