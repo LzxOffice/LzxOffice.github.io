@@ -3,462 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LzxAI</title>
-    <!-- 引入Tailwind CSS -->
+    <title>LzxAI - 智能对话助手</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <!-- 引入Markdown解析库 -->
+    <!-- Markdown 渲染库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css">
-    
-    <!-- 配置Tailwind -->
+    <!-- 代码高亮库 -->
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" rel="stylesheet">
+    <!-- MathJax 用于渲染LaTeX公式 -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>
+        // Tailwind 配置
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4F46E5',
-                        secondary: '#10B981',
-                        accent: '#F59E0B',
-                        neutral: '#64748B'
+                        primary: '#165DFF',
+                        secondary: '#0F172A',
+                        accent: '#38BDF8',
+                        dark: '#0F172A',
+                        light: '#F8FAFC'
                     },
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
-    
-    <!-- 自定义工具类 -->
     <style type="text/tailwindcss">
         @layer utilities {
             .content-auto {
                 content-visibility: auto;
             }
-            .btn-active {
-                @apply bg-primary text-white;
+            .text-shadow {
+                text-shadow: 0 0 10px rgba(22, 93, 255, 0.5);
             }
-            .markdown-body {
-                font-size: 0.875rem;
-                line-height: 1.5;
+            .bg-gradient-tech {
+                background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            }
+            .border-glow {
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .typing-animation::after {
+                content: '';
+                animation: typing 1.5s infinite;
+            }
+            @keyframes typing {
+                0%, 100% { content: ''; }
+                25% { content: '.'; }
+                50% { content: '..'; }
+                75% { content: '...'; }
+            }
+            /* Markdown 样式增强 */
+            .markdown-content h1 {
+                @apply text-2xl font-bold mt-4 mb-2 text-primary;
+            }
+            .markdown-content h2 {
+                @apply text-xl font-bold mt-3 mb-2 text-primary/90;
+            }
+            .markdown-content h3 {
+                @apply text-lg font-bold mt-2 mb-1 text-primary/80;
+            }
+            .markdown-content p {
+                @apply my-2;
+            }
+            .markdown-content ul {
+                @apply list-disc pl-6 my-2;
+            }
+            .markdown-content ol {
+                @apply list-decimal pl-6 my-2;
+            }
+            .markdown-content blockquote {
+                @apply border-l-4 border-primary/50 pl-4 py-1 my-2 bg-primary/5;
+            }
+            .markdown-content code {
+                @apply bg-gray-800 px-1 py-0.5 rounded text-accent;
+            }
+            .markdown-content pre {
+                @apply bg-gray-800 p-4 rounded-lg my-2 overflow-x-auto;
+            }
+            .markdown-content pre code {
+                @apply bg-transparent p-0;
+            }
+            .markdown-content a {
+                @apply text-accent hover:underline;
+            }
+            .markdown-content table {
+                @apply border-collapse w-full my-4;
+            }
+            .markdown-content th, .markdown-content td {
+                @apply border border-gray-700 px-4 py-2;
+            }
+            .markdown-content th {
+                @apply bg-gray-800;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
-    <!-- 顶部导航栏 -->
-    <header class="bg-white shadow-sm py-4">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa fa-brain text-primary text-2xl"></i>
-                    <h1 class="text-xl font-bold text-gray-800">LzxAI —— LzxOffce 开发的先进 AI</h1>
+<body class="bg-secondary text-light font-inter min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-dark/80 backdrop-blur-md border-b border-primary/20 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+                    <i class="fa fa-brain text-white"></i>
                 </div>
-                
-                <nav class="hidden-sm:hidden">
-                    <ul class="flex space-x-6">
-                        <li><a href="https://lzxoffice.github.io" class="text-gray-600 hover:text-primary transition-colors">访问官网</a></li>
-                        <li><a href="https://lzxoffice.github.io/products" class="text-gray-600 hover:text-primary transition-colors">下载电脑端</a></li>
-                    </ul>
-                </nav>
-                
-                <button class="sm:hidden text-gray-600" id="menuToggle">
-                    <i class="fa fa-bars text-xl"></i>
-                </button>
+                <h1 class="text-xl font-bold text-white text-shadow">LzxAI</h1>
             </div>
-            
-            <!-- 移动端菜单 -->
-            <div id="mobileMenu" class="hidden sm:hidden mt-4 pb-2">
-                <ul class="space-y-3">
-                    <li><a href="#" class="block text-gray-600 hover:text-primary transition-colors">首页</a></li>
-                    <li><a href="#about" class="block text-gray-600 hover:text-primary transition-colors">关于</a></li>
-                </ul>
+            <div class="flex items-center gap-4">
+                <button id="clearBtn" class="text-gray-400 hover:text-white transition-colors duration-300">
+                    <i class="fa fa-trash-o mr-1"></i>清空对话
+                
             </div>
         </div>
     </header>
 
-    <!-- 主要内容区 -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
-        
-        
-        <!-- 聊天界面 -->
-        <section class="mb-12 bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-            <!-- 服务选择栏 -->
-            <div class="p-4 border-b border-gray-100 bg-gray-50 flex flex-wrap gap-2 items-center">
-                <span class="text-sm text-gray-500 whitespace-nowrap">服务类型:</span>
-                
-                <!-- 服务类型按钮 -->
-                <button class="service-type-btn px-3 py-1.5 rounded-md text-sm border transition-all hover:border-primary btn-active" data-type="text">
-                    <i class="fa fa-file-text-o mr-1"></i>文本生成
-                </button>
-                <button class="service-type-btn px-3 py-1.5 rounded-md text-sm border border-gray-300 text-gray-700 transition-all hover:border-primary hover:text-primary" data-type="image">
-                    <i class="fa fa-picture-o mr-1"></i>图像生成
-                </button>
-                
-                <!-- 模型选择 (默认隐藏，文本生成时显示) -->
-                <div class="ml-4 flex items-center gap-2" id="modelSelector">
-                    <span class="text-sm text-gray-500 whitespace-nowrap">模型:</span>
-                    <button class="model-btn px-3 py-1.5 rounded-md text-sm border transition-all hover:border-primary btn-active" data-service="glm4">
-                        智谱 AI GLM-4-Flash
-                    </button>
-                    <button class="model-btn px-3 py-1.5 rounded-md text-sm border border-gray-300 text-gray-700 transition-all hover:border-primary hover:text-primary" data-service="pollinations-text">
-                        Pollinations
-                    </button>
-                </div>
-                
-                <!-- 图像模型选择 (默认隐藏，图像生成时显示) -->
-                <div class="ml-4 flex items-center gap-2 hidden" id="imageModelSelector">
-                    <span class="text-sm text-gray-500 whitespace-nowrap">模型:</span>
-                    <button class="model-btn px-3 py-1.5 rounded-md text-sm border transition-all hover:border-primary btn-active" data-service="pollinations-image">
-                        Pollinations
-                    </button>
-                </div>
+    <!-- 主内容区 -->
+    <main class="flex-1 container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
+        <!-- 对话历史侧边栏 -->
+        <aside class="lg:w-64 w-full bg-dark/50 rounded-xl border border-primary/20 p-4 hidden lg:block">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fa fa-history mr-2 text-primary"></i>对话历史
+            </h2>
+            <div id="historyList" class="space-y-2 overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-hide">
+                <div class="text-gray-500 text-sm text-center py-4">暂无对话历史</div>
             </div>
-            
-            <!-- 聊天消息区域 -->
-            <div id="chatMessages" class="h-[450px] overflow-y-auto p-4 space-y-4">
-                <!-- 系统提示 -->
-                <div class="flex items-start space-x-2">
-                    <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <i class="fa fa-info text-gray-600 text-xs"></i>
-                    </div>
-                    <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-[85%] text-sm text-gray-700">
-                        我是 LzxAI，很高兴见到你！
+        </aside>
+
+        <!-- 对话区域 -->
+        <div class="flex-1 flex flex-col gap-4">
+            <!-- 对话容器 -->
+            <div id="chatContainer" class="flex-1 bg-dark/50 rounded-xl border border-primary/20 p-4 overflow-y-auto scrollbar-hide">
+                <div class="flex flex-col gap-6 py-2">
+                    <!-- 欢迎消息 -->
+                    <div class="flex gap-3 ai-message">
+                        <div class="w-8 h-8 rounded-full bg-primary flex-shrink-0 flex items-center justify-center">
+                            <i class="fa fa-robot text-white"></i>
+                        </div>
+                        <div class="bg-dark/80 rounded-xl p-4 flex-1 markdown-content">
+                            <p>你好！我是 LzxAI，有什么需要帮助的吗？</p>
+			    <p>更多产品信息请访问 <a href="https://lzxoffice.github.io">LZX 工作室官网</a>。</p>
+
+                                                    </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- 输入区域 -->
-            <div class="p-4 border-t border-gray-100 bg-gray-50">
-                <div class="flex gap-2">
-                    <textarea id="userInput" rows="2" placeholder="请输入你的问题" class="flex-grow px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none text-sm"></textarea>
-                    <button id="sendButton" class="bg-primary hover:bg-primary/90 text-white p-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center">
-                        <i class="fa fa-paper-plane"></i>
-                    </button>
-                </div>
-                <p id="statusMessage" class="text-xs text-gray-500 mt-2 hidden"></p>
+            <div class="bg-dark/50 rounded-xl border border-primary/20 p-4">
+                <form id="chatForm" class="flex flex-col gap-3">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="输入你的问题，支持 Markdown 和 LaTeX 公式，按 Enter 发送信息" 
+                        class="w-full bg-dark/80 border border-primary/30 rounded-lg p-3 focus:outline-none focus:border-primary border-glow resize-none transition-all duration-300 h-20"
+                    ></textarea>
+                    <div class="flex justify-between items-center">
+                                                <button 
+                            type="submit" 
+                            class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 border-glow"
+                        >
+                            <i class="fa fa-paper-plane"></i>
+                            <span>发送</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-        </section>
-        
-        
+        </div>
     </main>
 
     <!-- 页脚 -->
-    <footer class="bg-gray-800 text-gray-400 py-6 text-sm">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2025 LzxAI 平台</p>
+    <footer class="bg-dark/80 border-t border-primary/20 py-4">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>LzxAI  | © 2025 LZX 工作室</p>
         </div>
     </footer>
 
-    <!-- 脚本 -->
     <script>
-        const API_CONFIG = {
-            glm4: {
-                name: "智谱AI GLM-4-Flash",
-                endpoint: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-                apiKey: "cc153b06cc1740e489aaa143e4c0a30d.dB64GZ1WEedC4ahh",   
-                model: "glm-4-flash",
-                type: "text"
-            },
-            "pollinations-text": {
-                name: "Pollinations (文本)",
-                endpoint: "https://text.pollinations.ai/",
-                apiKey: "",  
-                model: "",
-                type: "text"
-            },
-            "pollinations-image": {
-                name: "Pollinations (图像)",
-                endpoint: "https://image.pollinations.ai/prompt/",
-                apiKey: "", 
-                model: "",
-                type: "image"
-            }
-        };
-        let currentService = "glm4";
-        let currentType = "text";
+        // 全局变量
         let conversationHistory = [];
+        let isLoading = false;
         
-        // DOM元素
-        const menuToggle = document.getElementById('menuToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const sendButton = document.getElementById('sendButton');
-        const userInput = document.getElementById('userInput');
-        const chatMessages = document.getElementById('chatMessages');
-        const statusMessage = document.getElementById('statusMessage');
-        const serviceTypeBtns = document.querySelectorAll('.service-type-btn');
-        const modelBtns = document.querySelectorAll('.model-btn');
-        const modelSelector = document.getElementById('modelSelector');
-        const imageModelSelector = document.getElementById('imageModelSelector');
+        // DOM 元素
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const chatContainer = document.getElementById('chatContainer');
+        const clearBtn = document.getElementById('clearBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const historyList = document.getElementById('historyList');
         
-        // 移动端菜单切换
-        menuToggle.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        const API_KEY = 'cc153b06cc1740e489aaa143e4c0a30d.dB64GZ1WEedC4ahh'
+        const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+        
+        // 初始化Marked和MathJax
+        document.addEventListener('DOMContentLoaded', () => {
+            // 配置marked解析器
+            marked.setOptions({
+                highlight: (code, lang) => {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(code, { language: lang }).value;
+                    }
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true,
+                gfm: true
+            });
+            
+            // 自动聚焦输入框
+            messageInput.focus();
+            
+            // 监听表单提交
+            chatForm.addEventListener('submit', handleSubmit);
+            
+            // 监听清空按钮
+            clearBtn.addEventListener('click', clearChat);
+            
+            // 监听主题切换
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // 监听回车发送（Shift+回车换行）
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                }
+            });
+            
+            // 初始化MathJax
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['\\(', '\\)'], ['$', '$']],
+                    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                    processEscapes: true
+                },
+                svg: {
+                    fontCache: 'global'
+                },
+                startup: {
+                    typeset: false // 手动触发渲染，避免重复渲染
+                }
+            };
         });
         
-        // 服务类型切换
-        serviceTypeBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const type = btn.getAttribute('data-type');
-                currentType = type;
+        // 处理表单提交
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message || isLoading) return;
+            
+            // 清空输入框
+            messageInput.value = '';
+            
+            // 添加用户消息到界面（渲染Markdown）
+            addMessageToChat(message, 'user');
+            
+            // 添加到对话历史
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+            
+            // 更新历史列表
+            updateHistoryList();
+            
+            // 显示加载状态
+            isLoading = true;
+            const loadingMessage = addLoadingMessage();
+            
+            try {
+                // 调用 API 获取响应
+                const response = await fetchGLMAPI(conversationHistory);
                 
-                // 更新按钮样式
-                serviceTypeBtns.forEach(b => {
-                    b.classList.remove('btn-active', 'border-primary');
-                    b.classList.add('border-gray-300', 'text-gray-700');
+                // 移除加载状态
+                loadingMessage.remove();
+                isLoading = false;
+                
+                // 添加 AI 响应到界面（渲染Markdown和LaTeX）
+                addMessageToChat(response, 'ai');
+                
+                // 添加到对话历史
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: response
                 });
-                btn.classList.add('btn-active', 'border-primary');
-                btn.classList.remove('border-gray-300', 'text-gray-700');
                 
-                // 显示对应的模型选择器
-                if (type === 'text') {
-                    modelSelector.classList.remove('hidden');
-                    imageModelSelector.classList.add('hidden');
-                    // 切换到第一个文本模型
-                    currentService = "glm4";
-                    updateModelButtons();
-                    userInput.placeholder = "请输入您的问题";
-                } else {
-                    modelSelector.classList.add('hidden');
-                    imageModelSelector.classList.remove('hidden');
-                    // 切换到图像模型
-                    currentService = "pollinations-image";
-                    updateModelButtons();
-                    userInput.placeholder = "请描述描述您想要生成的图像";
+            } catch (error) {
+                // 移除加载状态
+                loadingMessage.remove();
+                isLoading = false;
+                
+                // 显示错误消息
+                addMessageToChat(`抱歉，发生了错误：${error.message}`, 'ai', true);
+                console.error('API 请求错误:', error);
+            }
+            
+            // 滚动到底部
+            scrollToBottom();
+        }
+        
+        // 调用 GLM-4-flash API
+        async function fetchGLMAPI(messages) {
+            const requestBody = {
+                model: "glm-4-flash",
+                messages: messages,
+                temperature: 0.7,
+                stream: false
+            };
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error?.message || `HTTP 错误: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+        
+        // 添加消息到聊天界面（支持Markdown和LaTeX渲染）
+        function addMessageToChat(content, sender, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex gap-3 ${sender}-message`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `w-8 h-8 rounded-full ${sender === 'user' ? 'bg-accent' : 'bg-primary'} flex-shrink-0 flex items-center justify-center`;
+            avatar.innerHTML = sender === 'user' 
+                ? '<i class="fa fa-user text-white"></i>' 
+                : '<i class="fa fa-robot text-white"></i>';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = `bg-dark/80 rounded-xl p-4 flex-1 markdown-content ${isError ? 'text-red-400' : ''}`;
+            
+            // 渲染Markdown
+            if (isError) {
+                contentDiv.textContent = content;
+            } else {
+                contentDiv.innerHTML = marked.parse(content);
+                
+                // 渲染LaTeX公式
+                if (window.MathJax) {
+                    MathJax.typesetPromise([contentDiv]).catch(err => console.error('MathJax渲染错误:', err));
                 }
-                
-                // 添加系统消息提示
-                const typeText = type === 'text' ? '文本生成' : '图像生成';
-                addMessage(`已切换到${typeText}服务`, false);
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+            
+            chatContainer.querySelector('.flex-col').appendChild(messageDiv);
+            
+            // 高亮代码块
+            highlightCodeBlocks(contentDiv);
+            
+            // 滚动到底部
+            scrollToBottom();
+        }
+        
+        // 代码高亮处理
+        function highlightCodeBlocks(element) {
+            const codeBlocks = element.querySelectorAll('pre code');
+            codeBlocks.forEach(block => {
+                hljs.highlightElement(block);
+            });
+        }
+        
+        // 添加加载中的消息
+        function addLoadingMessage() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'flex gap-3 ai-message';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'w-8 h-8 rounded-full bg-primary flex-shrink-0 flex items-center justify-center';
+            avatar.innerHTML = '<i class="fa fa-robot text-white"></i>';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'bg-dark/80 rounded-xl p-4 flex-1';
+            contentDiv.innerHTML = `<p class="typing-animation">正在思考</p>`;
+            
+            loadingDiv.appendChild(avatar);
+            loadingDiv.appendChild(contentDiv);
+            
+            chatContainer.querySelector('.flex-col').appendChild(loadingDiv);
+            
+            // 滚动到底部
+            scrollToBottom();
+            
+            return loadingDiv;
+        }
+        
+        // 滚动到底部
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 清空聊天
+        function clearChat() {
+            if (confirm('确定要清空所有对话吗？')) {
+                // 保留欢迎消息
+                const welcomeMessage = chatContainer.querySelector('.flex-col').firstElementChild;
+                chatContainer.querySelector('.flex-col').innerHTML = '';
+                chatContainer.querySelector('.flex-col').appendChild(welcomeMessage);
                 
                 // 重置对话历史
                 conversationHistory = [];
-            });
-        });
-        
-        // 模型选择
-        modelBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentService = btn.getAttribute('data-service');
-                updateModelButtons();
                 
-                // 添加系统消息提示
-                addMessage(`已选择模型: ${API_CONFIG[currentService].name}`, false);
-            });
-        });
-        
-        // 更新模型按钮状态
-        function updateModelButtons() {
-            modelBtns.forEach(btn => {
-                if (btn.getAttribute('data-service') === currentService) {
-                    btn.classList.add('btn-active', 'border-primary');
-                    btn.classList.remove('border-gray-300', 'text-gray-700');
-                } else {
-                    btn.classList.remove('btn-active', 'border-primary');
-                    btn.classList.add('border-gray-300', 'text-gray-700');
-                }
-            });
+                // 更新历史列表
+                updateHistoryList();
+                
+                // 滚动到底部
+                scrollToBottom();
+            }
         }
         
-        // 添加消息到聊天界面
-        function addMessage(content, isUser = false, isImage = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `flex items-start space-x-2 animate-fadeIn`;
+        // 切换主题
+        function toggleTheme() {
+            document.body.classList.toggle('bg-light');
+            document.body.classList.toggle('bg-secondary');
+            document.body.classList.toggle('text-dark');
+            document.body.classList.toggle('text-light');
             
-            const avatarClass = isUser ? 
-                'bg-primary text-white' : 
-                (isImage ? 'bg-accent text-white' : 'bg-gray-200 text-gray-600');
+            // 更新代码高亮样式
+            document.querySelectorAll('pre').forEach(pre => {
+                pre.classList.toggle('bg-gray-200');
+                pre.classList.toggle('bg-gray-800');
+            });
             
-            const messageBubbleClass = isUser ? 
-                'bg-primary text-white rounded-lg rounded-tr-none' : 
-                'bg-gray-100 text-gray-700 rounded-lg rounded-tl-none';
-            
-            // 对于非图片、非用户的消息，使用Markdown渲染
-            let messageContent = content;
-            if (!isImage && !isUser) {
-                // 使用marked库将Markdown转换为HTML
-                messageContent = marked.parse(content);
+            const icon = themeToggle.querySelector('i');
+            if (icon.classList.contains('fa-moon-o')) {
+                icon.classList.replace('fa-moon-o', 'fa-sun-o');
+            } else {
+                icon.classList.replace('fa-sun-o', 'fa-moon-o');
             }
             
-            messageDiv.innerHTML = `
-                <div class="w-7 h-7 rounded-full ${avatarClass} flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <i class="fa ${isUser ? 'fa-user' : (isImage ? 'fa-picture-o' : 'fa-robot')} text-xs"></i>
-                </div>
-                <div class="${messageBubbleClass} px-3 py-2 max-w-[85%] text-sm ${!isImage && !isUser ? 'markdown-body' : ''}">
-                    ${isImage ? 
-                        `<img src="${content}" alt="AI生成的图像" class="rounded-lg max-w-full h-auto">` : 
-                        messageContent
-                    }
-                </div>
-            `;
+            // 重新渲染MathJax以适配主题
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(err => console.error('MathJax重新渲染错误:', err));
+            }
+        }
+        
+        // 更新历史列表
+        function updateHistoryList() {
+            if (conversationHistory.length === 0) {
+                historyList.innerHTML = '<div class="text-gray-500 text-sm text-center py-4">暂无对话历史</div>';
+                return;
+            }
             
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            historyList.innerHTML = '';
             
-            // 如果是用户消息或AI回复，添加到对话历史（图像生成不保存历史）
-            if (content && (isUser || (!isImage && API_CONFIG[currentService].type === 'text'))) {
-                conversationHistory.push({
-                    role: isUser ? "user" : "assistant",
-                    content: content
+            // 只显示用户的问题作为历史项
+            const userMessages = conversationHistory.filter(msg => msg.role === 'user');
+            
+            userMessages.forEach((msg, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'p-2 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors duration-200 text-sm';
+                historyItem.textContent = msg.content.length > 20 
+                    ? msg.content.substring(0, 20) + '...' 
+                    : msg.content;
+                
+                historyItem.addEventListener('click', () => {
+                    // 这里可以添加点击历史项加载对应对话的逻辑
+                    alert(`加载对话: ${msg.content}`);
                 });
-            }
-        }
-        
-        // 显示状态消息
-        function showStatus(message, isError = false) {
-            statusMessage.textContent = message;
-            statusMessage.classList.remove('hidden', 'text-red-500', 'text-green-500');
-            statusMessage.classList.add(isError ? 'text-red-500' : 'text-green-500');
-        }
-        
-        // 隐藏状态消息
-        function hideStatus() {
-            statusMessage.classList.add('hidden');
-        }
-        
-        // 发送消息处理
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-            
-            // 获取当前服务的配置
-            const config = API_CONFIG[currentService];
-            
-            // 添加用户消息（用户输入保持原样显示，不进行Markdown渲染）
-            addMessage(message, true);
-            userInput.value = '';
-            
-            // 显示发送状态
-            const actionText = config.type === 'text' ? '生成文本' : '生成图像';
-            showStatus(`正在${actionText}...`);
-            
-            try {
-                let aiResponse;
                 
-                // Pollinations文本生成
-                if (currentService === 'pollinations-text') {
-                    const encodedPrompt = encodeURIComponent(message);
-                    const url = `${config.endpoint}${encodedPrompt}`;
-                    
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error(`HTTP错误: ${response.status}`);
-                    
-                    aiResponse = await response.text();
-                    addMessage(aiResponse);
-                }
-                // Pollinations图像生成
-                else if (currentService === 'pollinations-image') {
-                    const encodedPrompt = encodeURIComponent(message);
-                    // 添加一些参数改善图像质量
-                    const imageUrl = `${config.endpoint}${encodedPrompt}?width=800&height=600&nologo=true`;
-                    
-                    // 直接显示图片
-                    addMessage(imageUrl, false, true);
-                    aiResponse = '图像生成成功';
-                }
-                // 智谱AI处理
-                else if (currentService === 'glm4') {
-                    // 检查API Key是否已配置
-                    if (!config.apiKey || config.apiKey.includes('YOUR_')) {
-                        throw new Error('API Key未配置，请在代码中设置正确的API Key');
-                    }
-                    
-                    // 创建一个临时元素显示"正在输入..."
-                    const typingIndicator = document.createElement('div');
-                    typingIndicator.id = 'typingIndicator';
-                    typingIndicator.className = `flex items-start space-x-2`;
-                    typingIndicator.innerHTML = `
-                        <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fa fa-robot text-gray-600 text-xs"></i>
-                        </div>
-                        <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-[85%] text-sm text-gray-700">
-                            <p>正在生成文本...</p>
-                        </div>
-                    `;
-                    chatMessages.appendChild(typingIndicator);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    
-                    const response = await fetch(config.endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${config.apiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: config.model,
-                            messages: [
-                                ...conversationHistory.filter(item => item.role !== 'assistant'),
-                                { role: 'user', content: message }
-                            ],
-                            temperature: 0.7
-                        })
-                    });
-                    
-                    // 移除"正在输入..."提示
-                    document.getElementById('typingIndicator').remove();
-                    
-                    if (!response.ok) {
-                        const errorDetails = await response.text();
-                        throw new Error(`API错误: ${response.status} - ${errorDetails}`);
-                    }
-                    
-                    const data = await response.json();
-                    aiResponse = data.choices?.[0]?.message?.content || 
-                                data.content || 
-                                '未获取到有效响应';
-                    
-                    addMessage(aiResponse);
-                }
-                
-                showStatus(`${actionText}成功`, false);
-                setTimeout(hideStatus, 3000);
-                
-            } catch (error) {
-                console.error('API请求错误:', error);
-                // 移除可能存在的"正在输入..."提示
-                const typingIndicator = document.getElementById('typingIndicator');
-                if (typingIndicator) typingIndicator.remove();
-                
-                addMessage(`请求失败: ${error.message}`, false);
-                showStatus(`请求失败: ${error.message}`, true);
-            }
-        }
-        
-        // 发送按钮点击事件
-        sendButton.addEventListener('click', sendMessage);
-        
-        // 回车键发送消息
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        
-        // 添加平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop,
-                        behavior: 'smooth'
-                    });
-                    
-                    // 关闭移动菜单（如果打开）
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                    }
-                }
+                historyList.appendChild(historyItem);
             });
-        });
+        }
     </script>
 </body>
 </html>
