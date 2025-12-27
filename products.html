@@ -83,6 +83,30 @@
         color: #38bdf8;
         text-decoration: underline;
       }
+      .category-btn {
+        transition: all 0.3s ease;
+      }
+      .category-btn.active {
+        background-color: rgba(14, 165, 233, 0.2);
+        color: #0ea5e9;
+        border-color: #0ea5e9;
+      }
+      .search-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #ef4444;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transform: translateX(120%);
+        transition: transform 0.3s ease-out;
+        z-index: 1000;
+      }
+      .search-notification.show {
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
@@ -91,13 +115,28 @@
   <header class="sticky top-0 z-50 glass-effect shadow-lg transition-all duration-300">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-6">
+          <!-- Logo 部分 -->
           <a href="index.html" class="flex items-center space-x-2">
             <i class="fa fa-bolt text-primary text-2xl"></i>
             <span class="font-bold text-xl text-white">LzxOffice</span>
           </a>
+          
+          <!-- 桌面端搜索框 - 移到Logo旁边 -->
+          <div class="hidden md:block relative w-64">
+            <input 
+              type="text" 
+              id="product-search" 
+              placeholder="搜索产品..." 
+              class="w-full bg-dark border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:border-primary transition-colors text-sm"
+            >
+            <button id="search-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
         </div>
         
+        <!-- 导航菜单 -->
         <nav class="hidden md:flex space-x-8">
           <a href="index.html" class="text-gray-300 font-medium hover:text-primary transition-colors">首页</a>
           <a href="products.html" class="text-primary font-medium hover:text-secondary transition-colors">产品下载</a>
@@ -105,6 +144,7 @@
           <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary">商店</a>
         </nav>
         
+        <!-- 移动端菜单按钮 -->
         <div class="md:hidden">
           <button id="menu-toggle" class="text-gray-300 hover:text-primary focus:outline-none">
             <i class="fa fa-bars text-xl"></i>
@@ -115,6 +155,18 @@
     
     <div id="mobile-menu" class="hidden md:hidden glass-effect border-t border-gray-800">
       <div class="container mx-auto px-4 py-3 space-y-3">
+        <!-- 移动端搜索框 -->
+        <div class="relative mb-2">
+          <input 
+            type="text" 
+            id="mobile-product-search" 
+            placeholder="搜索产品..." 
+            class="w-full bg-dark border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:border-primary transition-colors text-sm"
+          >
+          <button id="mobile-search-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
         <a href="index.html" class="block text-gray-300 font-medium hover:text-primary">首页</a>
         <a href="products.html" class="block text-primary font-medium">产品下载</a>
         <a href="contact.html" class="block text-gray-300 font-medium hover:text-primary">联系我们</a>
@@ -123,17 +175,38 @@
     </div>
   </header>
 
+  <!-- 搜索提示框 -->
+  <div id="search-notification" class="search-notification">
+    <i class="fa fa-exclamation-circle mr-2"></i>未找到相关产品
+  </div>
+
   <main class="flex-grow">
     <section class="py-16 bg-dark">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white mb-4">我们的产品</h2>
-          <p class="text-gray-400 max-w-2xl mx-auto">探索 LzxOffice 开发的高质量智能办公工具</p>
+          <p class="text-gray-400 max-w-2xl mx-auto">探索 LzxOffice 开发的高质量智能产品</p>
+        </div>
+        
+        <!-- 分类导航 -->
+        <div class="flex flex-wrap justify-center gap-3 mb-10">
+          <button class="category-btn active px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="all">
+            全部
+          </button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="game">
+            游戏
+          </button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="study">
+            学习
+          </button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="tool">
+            工具
+          </button>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- 产品1 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品1 - 工具类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="随机点名器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/8lqy6rlx.png" alt="随机点名器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -149,20 +222,18 @@
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-1" class="version-list mt-4 pl-2 border-l-2 border-primary">
-<div class="py-2 border-b border-gray-800">
+                <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/VdD0hd" class="flex justify-between items-center">
                     <span class="version-number">v1.5 (最新版)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
-
-		<div class="py-2 border-b border-gray-800">
+                <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/oRmOhY" class="flex justify-between items-center">
                     <span class="version-number">v1.4</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
-
                 <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/1jmjiw" class="flex justify-between items-center">
                     <span class="version-number">v1.3</span>
@@ -185,8 +256,8 @@
             </div>
           </div>
           
-          <!-- 产品2 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品2 - 游戏类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="game" data-name="棋类大战">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/bxcpiki3.png" alt="棋类大战界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -211,8 +282,8 @@
             </div>
           </div>
           
-          <!-- 产品3 - 增加了网页版链接 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品3 - 工具类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="LzxAI">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/s6tjebmj.png" alt="AI工具界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -224,19 +295,17 @@
                 <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v2.0</span></span>              
               </div>
               <div class="flex items-center space-x-4">
-                
                 <a href="https://lzxoffice.github.io/online/LzxAI" class="web-version-link inline-flex items-center text-primary font-medium">
                   网页版 <i class="fa fa-external-link ml-1 text-sm"></i>
                 </a>
               </div>
               <div id="version-3" class="version-list mt-4 pl-2 border-l-2 border-primary">
-                
               </div>
             </div>
           </div>
           
-          <!-- 产品4 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品4 - 工具类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="Lzx-Markdown">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/x7vp6l9j.png" alt="MD界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -262,8 +331,8 @@
             </div>
           </div>
           
-          <!-- 产品5 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品5 - 学习类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="study" data-name="几何画板">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/jef9xdiz.png" alt="几何画板界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -289,8 +358,8 @@
             </div>
           </div>
           
-          <!-- 产品6 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品6 - 学习类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="study" data-name="单词卡片记忆器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/b09c3i2u.png" alt="单词卡片记忆器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -315,8 +384,8 @@
             </div>
           </div>
           
-          <!-- 产品7 - Lzx 小游戏 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          <!-- 产品7 - 游戏类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="game" data-name="Lzx 小游戏">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/ba5tp3w7.png" alt="Lzx小游戏界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -332,7 +401,6 @@
                 <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-7">
                   下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
                 </button>
-                
               </div>
               <div id="version-7" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2 border-b border-gray-800">
@@ -344,8 +412,9 @@
               </div>
             </div>
           </div>
-    <!-- 产品8 - Lzx 文本编辑器 -->
-          <div class="bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800">
+          
+          <!-- 产品8 - 工具类 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="Lzx 文本编辑器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/j3xesig2.png" alt="Lzx文本编辑器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
@@ -360,7 +429,6 @@
                 <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-8">
                   下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
                 </button>
-                
               </div>
               <div id="version-8" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2 border-b border-gray-800">
@@ -374,11 +442,10 @@
           </div>
         </div>
       </div>
-
     </section>
   </main>
 
- <footer class="bg-dark py-10 border-t border-gray-800">
+  <footer class="bg-dark py-10 border-t border-gray-800">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
@@ -481,6 +548,107 @@
           icon.style.transform = 'rotate(0)';
         }
       });
+    });
+    
+    // 分类筛选功能
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const productCards = document.querySelectorAll('.product-card');
+    
+    categoryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 移除所有按钮的active类
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        // 给当前点击的按钮添加active类
+        btn.classList.add('active');
+        
+        const category = btn.getAttribute('data-category');
+        
+        // 筛选产品卡片
+        productCards.forEach(card => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 搜索功能实现
+    function performSearch(searchTerm) {
+      if (!searchTerm.trim()) return;
+      
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      const matchingProducts = [];
+      
+      // 查找匹配的产品
+      productCards.forEach(card => {
+        const productName = card.getAttribute('data-name').toLowerCase();
+        if (productName.includes(lowerSearchTerm)) {
+          matchingProducts.push(card);
+        }
+      });
+      
+      // 处理搜索结果
+      if (matchingProducts.length > 0) {
+        // 获取第一个匹配产品的分类
+        const targetCategory = matchingProducts[0].getAttribute('data-category');
+        
+        // 切换到对应的分类
+        categoryBtns.forEach(btn => {
+          if (btn.getAttribute('data-category') === targetCategory) {
+            btn.click(); // 触发分类按钮点击事件
+          }
+        });
+        
+        // 高亮显示匹配的产品（可选）
+        productCards.forEach(card => {
+          if (matchingProducts.includes(card)) {
+            card.classList.add('ring-2', 'ring-primary');
+            setTimeout(() => {
+              card.classList.remove('ring-2', 'ring-primary');
+            }, 2000);
+          }
+        });
+      } else {
+        // 显示未找到提示
+        const notification = document.getElementById('search-notification');
+        notification.classList.add('show');
+        
+        // 5秒后隐藏提示
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 5000);
+      }
+      
+      // 清空搜索框
+      document.getElementById('product-search').value = '';
+      document.getElementById('mobile-product-search').value = '';
+    }
+    
+    // 桌面端搜索按钮
+    document.getElementById('search-btn').addEventListener('click', () => {
+      const searchTerm = document.getElementById('product-search').value;
+      performSearch(searchTerm);
+    });
+    
+    // 移动端搜索按钮
+    document.getElementById('mobile-search-btn').addEventListener('click', () => {
+      const searchTerm = document.getElementById('mobile-product-search').value;
+      performSearch(searchTerm);
+    });
+    
+    // 支持回车键搜索
+    document.getElementById('product-search').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(e.target.value);
+      }
+    });
+    
+    document.getElementById('mobile-product-search').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(e.target.value);
+      }
     });
   </script>
 </body>
