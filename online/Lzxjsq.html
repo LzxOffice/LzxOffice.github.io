@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lzx 计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "Roboto", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lzx-calculator {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.3), 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .calc-title {
+            background: linear-gradient(90deg, #00bfff, #0077ff);
+            color: #ffffff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+        }
+
+        .calc-tabs {
+            display: flex;
+            background: rgba(10, 18, 35, 0.9);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            color: #a0bcf8;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: #00bfff;
+            font-weight: bold;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #00bfff, #0077ff);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+        }
+
+        .calc-contents {
+            padding: 20px;
+        }
+
+        .calc-content {
+            display: none;
+        }
+
+        .calc-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-area {
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 20px 15px;
+            background: rgba(5, 10, 20, 0.8);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 24px;
+            text-align: right;
+            outline: none;
+            caret-color: #00bfff;
+            box-shadow: inset 0 0 10px rgba(0, 191, 255, 0.1);
+        }
+
+        .input-box::placeholder {
+            color: #64748b;
+        }
+
+        .btn-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn-grid-normal, .btn-grid-sci {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .btn-grid-base, .btn-grid-loan {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .calc-btn {
+            padding: 18px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(30, 41, 59, 0.8);
+            color: #ffffff;
+            border: 1px solid transparent;
+        }
+
+        .calc-btn:hover {
+            background: rgba(51, 65, 85, 0.8);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-op {
+            background: rgba(0, 119, 255, 0.7);
+            color: #ffffff;
+        }
+
+        .btn-op:hover {
+            background: rgba(0, 119, 255, 0.9);
+            border: 1px solid rgba(0, 191, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 119, 255, 0.5);
+        }
+
+        .btn-clear {
+            background: rgba(255, 69, 0, 0.7);
+            color: #ffffff;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 69, 0, 0.9);
+            border: 1px solid rgba(255, 140, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+        }
+
+        .btn-equal {
+            background: rgba(0, 191, 255, 0.7);
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .btn-equal:hover {
+            background: rgba(0, 191, 255, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
+        }
+
+        .form-item {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            color: #a0bcf8;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 10px;
+            background: rgba(5, 10, 20, 0.8);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            border: 1px solid rgba(0, 191, 255, 0.7);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+
+        @media (max-width: 400px) {
+            .calc-btn {
+                padding: 15px 0;
+                font-size: 14px;
+            }
+
+            .input-box {
+                font-size: 20px;
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lzx-calculator">
+        <div class="calc-title">Lzx 计算器</div>
+        <div class="calc-tabs">
+            <button class="tab-btn active" data-tab="normal">常用计算</button>
+            <button class="tab-btn" data-tab="sci">科学计算</button>
+            <button class="tab-btn" data-tab="base">进制转换</button>
+            <button class="tab-btn" data-tab="loan">房贷计算</button>
+        </div>
+        <div class="calc-contents">
+            <div class="calc-content active" id="normal">
+                <div class="input-area">
+                    <input type="text" class="input-box" id="normal-input" placeholder="0" readonly>
+                </div>
+                <div class="btn-grid btn-grid-normal">
+                    <button class="calc-btn btn-clear" onclick="clearInput('normal-input')">AC</button>
+                    <button class="calc-btn btn-clear" onclick="deleteLastChar('normal-input')">←</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('normal-input', '%')">%</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('normal-input', '/')">÷</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '7')">7</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '8')">8</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '9')">9</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('normal-input', '*')">×</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '4')">4</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '5')">5</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '6')">6</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('normal-input', '-')">-</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '1')">1</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '2')">2</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '3')">3</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('normal-input', '+')">+</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '00')">00</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '0')">0</button>
+                    <button class="calc-btn" onclick="appendChar('normal-input', '.')">.</button>
+                    <button class="calc-btn btn-equal" onclick="calculateResult('normal-input')">=</button>
+                </div>
+            </div>
+
+            <div class="calc-content" id="sci">
+                <div class="input-area">
+                    <input type="text" class="input-box" id="sci-input" placeholder="0" readonly>
+                </div>
+                <div class="btn-grid btn-grid-sci">
+                    <button class="calc-btn btn-clear" onclick="clearInput('sci-input')">AC</button>
+                    <button class="calc-btn btn-clear" onclick="deleteLastChar('sci-input')">←</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '^')">^</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '√')">√</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', 'sin')">sin</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', 'cos')">cos</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', 'tan')">tan</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '/')">÷</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', 'log')">log</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', 'ln')">ln</button>
+                    <button class="calc-btn btn-op" onclick="calculateFunc('sci-input', '!')">!</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '*')">×</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '7')">7</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '8')">8</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '9')">9</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '-')">-</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '4')">4</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '5')">5</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '6')">6</button>
+                    <button class="calc-btn btn-op" onclick="appendChar('sci-input', '+')">+</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', 'π')">π</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '00')">00</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '0')">0</button>
+                    <button class="calc-btn" onclick="appendChar('sci-input', '.')">.</button>
+                    <button class="calc-btn btn-equal" onclick="calculateResult('sci-input')">=</button>
+                </div>
+            </div>
+
+            <div class="calc-content" id="base">
+                <div class="form-item">
+                    <label class="form-label">输入数值</label>
+                    <input type="text" class="form-input" id="base-input" placeholder="请输入要转换的数值">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">原进制</label>
+                    <select class="form-input" id="base-from">
+                        <option value="2">二进制</option>
+                        <option value="8">八进制</option>
+                        <option value="10" selected>十进制</option>
+                        <option value="16">十六进制</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">目标进制</label>
+                    <select class="form-input" id="base-to">
+                        <option value="2">二进制</option>
+                        <option value="8">八进制</option>
+                        <option value="10">十进制</option>
+                        <option value="16" selected>十六进制</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">转换结果</label>
+                    <input type="text" class="form-input" id="base-result" placeholder="转换结果将显示在这里" readonly>
+                </div>
+                <div class="btn-grid btn-grid-base">
+                    <button class="calc-btn btn-op" onclick="convertBase()">执行转换</button>
+                    <button class="calc-btn btn-clear" onclick="clearBase()">清空内容</button>
+                </div>
+            </div>
+
+            <div class="calc-content" id="loan">
+                <div class="form-item">
+                    <label class="form-label">贷款总额（元）</label>
+                    <input type="number" class="form-input" id="loan-total" placeholder="例如：1000000">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">贷款年限（年）</label>
+                    <input type="number" class="form-input" id="loan-years" placeholder="例如：30">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">年利率（%）</label>
+                    <input type="number" step="0.01" class="form-input" id="loan-rate" placeholder="例如：3.95">
+                </div>
+                <div class="form-item">
+                    <label class="form-label">还款方式</label>
+                    <select class="form-input" id="loan-type">
+                        <option value="equal-principal">等额本金</option>
+                        <option value="equal-payment" selected>等额本息</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">计算结果</label>
+                    <input type="text" class="form-input" id="loan-result" placeholder="还款明细将显示在这里" readonly>
+                </div>
+                <div class="btn-grid btn-grid-loan">
+                    <button class="calc-btn btn-op" onclick="calculateLoan()">计算房贷</button>
+                    <button class="calc-btn btn-clear" onclick="clearLoan()">清空内容</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const calcContents = document.querySelectorAll('.calc-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                calcContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 核心新增：常用计算键盘输入监听
+        const normalInput = document.getElementById('normal-input');
+        // 页面加载后自动聚焦常用计算输入框（可选，提升体验）
+        window.onload = () => {
+            normalInput.focus();
+        };
+
+        // 绑定键盘按下事件
+        document.addEventListener('keydown', (e) => {
+            // 只有常用计算标签激活时，才响应键盘输入
+            const isNormalActive = document.getElementById('normal').classList.contains('active');
+            if (!isNormalActive) return;
+
+            const key = e.key;
+            const input = normalInput;
+            const ops = ['+', '-', '*', '/', '%'];
+
+            // 1. 数字键（0-9）和小数点
+            if ((/^[0-9.]$/.test(key))) {
+                e.preventDefault(); // 阻止默认行为（如输入到地址栏）
+                appendChar('normal-input', key);
+            }
+            // 2. 运算符键（+ - * / %）
+            else if (ops.includes(key)) {
+                e.preventDefault();
+                appendChar('normal-input', key);
+            }
+            // 3. 回车键 = 计算结果
+            else if (key === 'Enter') {
+                e.preventDefault();
+                calculateResult('normal-input');
+            }
+            // 4. 退格键 = 删除最后一个字符
+            else if (key === 'Backspace') {
+                e.preventDefault();
+                deleteLastChar('normal-input');
+            }
+            // 5. ESC键 = 清空输入框
+            else if (key === 'Escape') {
+                e.preventDefault();
+                clearInput('normal-input');
+            }
+            // 6. 乘除符号兼容（键盘的 * / 对应计算器的 × ÷）
+            else if (key === '*') {
+                e.preventDefault();
+                appendChar('normal-input', '*');
+            } else if (key === '/') {
+                e.preventDefault();
+                appendChar('normal-input', '/');
+            }
+        });
+
+        function appendChar(inputId, char) {
+            const input = document.getElementById(inputId);
+            const currentValue = input.value;
+            const ops = ['+', '-', '*', '/', '%', '^'];
+            
+            if (ops.includes(char) && ops.includes(currentValue.slice(-1))) {
+                return;
+            }
+            input.value = currentValue + char;
+        }
+
+        function clearInput(inputId) {
+            document.getElementById(inputId).value = '';
+        }
+
+        function deleteLastChar(inputId) {
+            const input = document.getElementById(inputId);
+            input.value = input.value.slice(0, -1);
+        }
+
+        function calculateResult(inputId) {
+            const input = document.getElementById(inputId);
+            let expression = input.value;
+
+            if (!expression) return;
+
+            expression = expression
+                .replace('×', '*')
+                .replace('÷', '/')
+                .replace('^', '**');
+
+            try {
+                const result = eval(expression);
+                input.value = isFinite(result) ? result : '计算错误';
+            } catch (error) {
+                input.value = '表达式错误';
+            }
+        }
+
+        function calculateFunc(inputId, func) {
+            const input = document.getElementById(inputId);
+            const currentValue = input.value;
+
+            if (!currentValue && func !== '!') return;
+
+            try {
+                let result;
+                const num = parseFloat(currentValue);
+
+                switch (func) {
+                    case 'sin':
+                        result = Math.sin(Math.PI * num / 180);
+                        break;
+                    case 'cos':
+                        result = Math.cos(Math.PI * num / 180);
+                        break;
+                    case 'tan':
+                        result = Math.tan(Math.PI * num / 180);
+                        break;
+                    case 'log':
+                        result = Math.log10(num);
+                        break;
+                    case 'ln':
+                        result = Math.log(num);
+                        break;
+                    case '!':
+                        if (num < 0 || !Number.isInteger(num)) {
+                            input.value = '非正整数不可阶乘';
+                            return;
+                        }
+                        result = 1;
+                        for (let i = 1; i <= num; i++) {
+                            result *= i;
+                        }
+                        break;
+                    default:
+                        result = currentValue;
+                }
+
+                input.value = isFinite(result) ? result.toFixed(10) : '计算错误';
+            } catch (error) {
+                input.value = '函数计算错误';
+            }
+        }
+
+        function convertBase() {
+            const input = document.getElementById('base-input').value;
+            const fromBase = parseInt(document.getElementById('base-from').value);
+            const toBase = parseInt(document.getElementById('base-to').value);
+            const resultInput = document.getElementById('base-result');
+
+            if (!input) {
+                resultInput.value = '请输入要转换的数值';
+                return;
+            }
+
+            try {
+                const decimalNum = parseInt(input, fromBase);
+                if (isNaN(decimalNum)) {
+                    resultInput.value = '输入数值与原进制不匹配';
+                    return;
+                }
+
+                let result;
+                switch (toBase) {
+                    case 2:
+                        result = decimalNum.toString(2);
+                        break;
+                    case 8:
+                        result = decimalNum.toString(8);
+                        break;
+                    case 10:
+                        result = decimalNum.toString(10);
+                        break;
+                    case 16:
+                        result = decimalNum.toString(16).toUpperCase();
+                        break;
+                    default:
+                        result = '不支持的进制';
+                }
+
+                resultInput.value = result;
+            } catch (error) {
+                resultInput.value = '转换失败';
+            }
+        }
+
+        function clearBase() {
+            document.getElementById('base-input').value = '';
+            document.getElementById('base-result').value = '';
+            document.getElementById('base-from').value = 10;
+            document.getElementById('base-to').value = 16;
+        }
+
+        function calculateLoan() {
+            const total = parseFloat(document.getElementById('loan-total').value) || 0;
+            const years = parseFloat(document.getElementById('loan-years').value) || 0;
+            const rate = parseFloat(document.getElementById('loan-rate').value) || 0;
+            const type = document.getElementById('loan-type').value;
+            const resultInput = document.getElementById('loan-result');
+
+            if (total <= 0 || years <= 0 || rate <= 0) {
+                resultInput.value = '请输入有效的正数参数';
+                return;
+            }
+
+            const months = years * 12;
+            const monthlyRate = rate / 100 / 12;
+
+            try {
+                let result = '';
+                if (type === 'equal-payment') {
+                    const monthlyPayment = total * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+                    const totalPayment = monthlyPayment * months;
+                    const totalInterest = totalPayment - total;
+
+                    result = `每月还款：${monthlyPayment.toFixed(2)} 元，总还款：${totalPayment.toFixed(2)} 元，总利息：${totalInterest.toFixed(2)} 元`;
+                } else if (type === 'equal-principal') {
+                    const monthlyPrincipal = total / months;
+                    const firstMonthInterest = total * monthlyRate;
+                    const firstMonthPayment = monthlyPrincipal + firstMonthInterest;
+                    const lastMonthInterest = monthlyPrincipal * monthlyRate;
+                    const lastMonthPayment = monthlyPrincipal + lastMonthInterest;
+                    const totalInterest = (firstMonthInterest + lastMonthInterest) * months / 2;
+                    const totalPayment = total + totalInterest;
+
+                    result = `首月还款：${firstMonthPayment.toFixed(2)} 元，末月还款：${lastMonthPayment.toFixed(2)} 元，总还款：${totalPayment.toFixed(2)} 元，总利息：${totalInterest.toFixed(2)} 元（每月递减：${(monthlyPrincipal * monthlyRate).toFixed(2)} 元）`;
+                }
+
+                resultInput.value = result;
+            } catch (error) {
+                resultInput.value = '计算失败，请检查参数';
+            }
+        }
+
+        function clearLoan() {
+            document.getElementById('loan-total').value = '';
+            document.getElementById('loan-years').value = '';
+            document.getElementById('loan-rate').value = '';
+            document.getElementById('loan-result').value = '';
+            document.getElementById('loan-type').value = 'equal-payment';
+        }
+    </script>
+</body>
+</html>
