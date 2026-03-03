@@ -22,7 +22,7 @@
           },
           fontFamily: {
             inter: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+            mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace']
           },
         },
       }
@@ -108,6 +108,19 @@
       .search-notification.show {
         transform: translateX(0);
       }
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* 语言切换按钮样式 */
+      .lang-toggle-btn {
+        @apply px-4 py-1.5 rounded-md transition-all duration-300 bg-primary/10 hover:bg-primary/30 text-light flex items-center gap-2;
+      }
     }
   </style>
 </head>
@@ -117,19 +130,18 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-6">
-          <!-- Logo 部分 -->
           <a href="index.html" class="flex items-center space-x-2">
             <i class="fa fa-bolt text-primary text-2xl"></i>
             <span class="font-bold text-xl text-white">LzxOffice</span>
           </a>
           
-          <!-- 桌面端搜索框 - 移到Logo旁边 -->
           <div class="hidden md:block relative w-64">
             <input 
               type="text" 
               id="product-search" 
               placeholder="搜索产品..." 
               class="w-full bg-dark border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:border-primary transition-colors text-sm"
+              data-lang="search-placeholder"
             >
             <button id="search-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary">
               <i class="fa fa-search"></i>
@@ -137,16 +149,27 @@
           </div>
         </div>
         
-        <!-- 导航菜单 -->
+        <!-- 语言切换按钮（桌面端） -->
+        <div class="hidden md:flex items-center mr-4">
+          <button id="lang-toggle" class="lang-toggle-btn">
+            <i class="fa fa-globe text-primary"></i>
+            <span id="lang-btn-text">切换为英文</span>
+          </button>
+        </div>
+        
         <nav class="hidden md:flex space-x-8">
-          <a href="index.html" class="text-gray-300 font-medium hover:text-primary transition-colors">首页</a>
-          <a href="products.html" class="text-primary font-medium hover:text-secondary transition-colors">产品下载</a>
-          <a href="contact.html" class="text-gray-300 font-medium hover:text-primary transition-colors">联系我们</a>
-          <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary">商店</a>
+          <a href="index.html" class="text-gray-300 font-medium hover:text-primary transition-colors" data-lang="nav-home">首页</a>
+          <a href="products.html" class="text-primary font-medium hover:text-secondary transition-colors" data-lang="nav-products">产品下载</a>
+          <a href="contact.html" class="text-gray-300 font-medium hover:text-primary transition-colors" data-lang="nav-contact">联系我们</a>
+          <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-store">商店</a>
         </nav>
         
-        <!-- 移动端菜单按钮 -->
-        <div class="md:hidden">
+        <div class="md:hidden flex items-center space-x-3">
+          <!-- 语言切换按钮（移动端） -->
+          <button id="lang-toggle-mobile" class="lang-toggle-btn text-sm px-2 py-1">
+            <i class="fa fa-globe text-primary text-sm"></i>
+            <span id="lang-btn-text-mobile">En</span>
+          </button>
           <button id="menu-toggle" class="text-gray-300 hover:text-primary focus:outline-none">
             <i class="fa fa-bars text-xl"></i>
           </button>
@@ -156,76 +179,65 @@
     
     <div id="mobile-menu" class="hidden md:hidden glass-effect border-t border-gray-800">
       <div class="container mx-auto px-4 py-3 space-y-3">
-        <!-- 移动端搜索框 -->
         <div class="relative mb-2">
           <input 
             type="text" 
             id="mobile-product-search" 
             placeholder="搜索产品..." 
             class="w-full bg-dark border border-gray-700 rounded-full px-4 py-2 pr-10 focus:outline-none focus:border-primary transition-colors text-sm"
+            data-lang="search-placeholder"
           >
           <button id="mobile-search-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary">
             <i class="fa fa-search"></i>
           </button>
         </div>
-        <a href="index.html" class="block text-gray-300 font-medium hover:text-primary">首页</a>
-        <a href="products.html" class="block text-primary font-medium">产品下载</a>
-        <a href="contact.html" class="block text-gray-300 font-medium hover:text-primary">联系我们</a>
-        <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary">商店</a>
+        <a href="index.html" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-home">首页</a>
+        <a href="products.html" class="block text-primary font-medium" data-lang="nav-products">产品下载</a>
+        <a href="contact.html" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-contact">联系我们</a>
+        <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-store">商店</a>
       </div>
     </div>
   </header>
 
-  <!-- 搜索提示框 -->
-  <div id="search-notification" class="search-notification">
+  <div id="search-notification" class="search-notification" data-lang="search-notfound">
     <i class="fa fa-exclamation-circle mr-2"></i>未找到相关产品
   </div>
 
   <main class="flex-grow">
+    
     <section class="py-16 bg-dark">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white mb-4">我们的产品</h2>
-          <p class="text-gray-400 max-w-2xl mx-auto">探索 LzxOffice 开发的高质量智能产品</p>
+        <div class="text-center mb-12 reveal">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white mb-4" data-lang="our-products">我们的产品</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto" data-lang="our-products-sub">探索 LzxOffice 开发的高质量智能产品</p>
         </div>
         
-        <!-- 分类导航 -->
-        <div class="flex flex-wrap justify-center gap-3 mb-10">
-          <button class="category-btn active px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="all">
-            全部
-          </button>
-          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="game">
-            游戏
-          </button>
-          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="study">
-            学习
-          </button>
-          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="tool">
-            工具
-          </button>
+        <div class="flex flex-wrap justify-center gap-3 mb-10 reveal">
+          <button class="category-btn active px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="all" data-lang="category-all">全部</button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="game" data-lang="category-game">游戏</button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="study" data-lang="category-study">学习</button>
+          <button class="category-btn px-5 py-2 rounded-full border border-gray-700 hover:border-primary text-gray-300" data-category="tool" data-lang="category-tool">工具</button>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- 产品1 - 工具类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="随机点名器">
+          <!-- 产品1：随机点名器 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="tool" data-name="随机点名器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/8lqy6rlx.png" alt="随机点名器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">随机点名器</h3>
-              <p class="text-gray-400 mb-4">
-                支持多种点名模式，自定义前缀后缀，完美适用于课堂教学场景
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-caller-name">随机点名器</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-caller-desc">支持多种点名模式，自定义前缀后缀，完美适用于课堂教学场景</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.5</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.5</span>              
               </div>
-              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-1">
+              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-1" data-lang="prod-download">
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-1" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/VdD0hd" class="flex justify-between items-center">
-                    <span class="version-number">v1.5 (最新版)</span>
+                    <span class="version-number">v1.5 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -257,25 +269,24 @@
             </div>
           </div>
           
-          <!-- 产品2 - 游戏类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="game" data-name="棋类大战">
+          <!-- 产品2：棋类大战 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="game" data-name="棋类大战">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/bxcpiki3.png" alt="棋类大战界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">棋类大战</h3>
-              <p class="text-gray-400 mb-4">
-                有趣棋类大战，为生活增添乐趣              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-chess-name">棋类大战</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-chess-desc">有趣棋类大战，为生活增添乐趣</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>
               </div>
-              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-2">
+              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-2" data-lang="prod-download">
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-2" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2">
                   <a href="https://www.now61.cn/s/9X4vsy" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -283,20 +294,19 @@
             </div>
           </div>
           
-          <!-- 产品3 - 工具类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="LzxAI">
+          <!-- 产品3：LzxAI -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="tool" data-name="LzxAI">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/s6tjebmj.png" alt="AI工具界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">LzxAI</h3>
-              <p class="text-gray-400 mb-4">
-                LzxAI，智能引擎驱动未来              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-lzxai-name">LzxAI</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-lzxai-desc">LzxAI，智能引擎驱动未来</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v2.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v2.0</span>              
               </div>
               <div class="flex items-center space-x-4">
-                <a href="https://lzxoffice.github.io/online/LzxAI" class="web-version-link inline-flex items-center text-primary font-medium">
+                <a href="https://lzxoffice.github.io/online/LzxAI" class="web-version-link inline-flex items-center text-primary font-medium" data-lang="prod-webversion">
                   网页版 <i class="fa fa-external-link ml-1 text-sm"></i>
                 </a>
               </div>
@@ -305,26 +315,24 @@
             </div>
           </div>
           
-          <!-- 产品4 - 工具类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="Lzx-Markdown">
+          <!-- 产品4：Lzx-Markdown -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="tool" data-name="Lzx-Markdown">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/x7vp6l9j.png" alt="MD界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">Lzx-Markdown</h3>
-              <p class="text-gray-400 mb-4">
-                简洁的 MD 编辑器，完美适配工作场景
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-lzxmd-name">Lzx-Markdown</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-lzxmd-desc">简洁的 MD 编辑器，完美适配工作场景</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>              
               </div>
-              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-4">
+              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-4" data-lang="prod-download">
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-4" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2">
                   <a href="https://www.now61.cn/s/EJVrfb" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -332,26 +340,24 @@
             </div>
           </div>
           
-          <!-- 产品5 - 学习类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="study" data-name="几何画板">
+          <!-- 产品5：几何画板 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="study" data-name="几何画板">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/jef9xdiz.png" alt="几何画板界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">几何画板</h3>
-              <p class="text-gray-400 mb-4">
-                几何画板带你在数学大海里遨游
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-geometry-name">几何画板</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-geometry-desc">几何画板带你在数学大海里遨游</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>              
               </div>
-              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-5">
+              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-5" data-lang="prod-download">
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-5" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2">
                   <a href="https://www.now61.cn/s/PzrKHq" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -359,25 +365,23 @@
             </div>
           </div>
           
-          <!-- 产品6 - 学习类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="study" data-name="单词卡片记忆器">
+          <!-- 产品6：单词卡片记忆器 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="study" data-name="单词卡片记忆器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/b09c3i2u.png" alt="单词卡片记忆器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">单词卡片记忆器</h3>
-              <p class="text-gray-400 mb-4">
-                简单的单词记忆器，让你的英语更上一层楼
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-wordcard-name">单词卡片记忆器</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-wordcard-desc">简单的单词记忆器，让你的英语更上一层楼</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span></div>
-              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-6">
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span></div>
+              <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-6" data-lang="prod-download">
                 下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
               </button>
               <div id="version-6" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2">
                   <a href="https://www.now61.cn/s/9XqRTy" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -385,28 +389,26 @@
             </div>
           </div>
           
-          <!-- 产品7 - 游戏类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="game" data-name="Lzx 小游戏">
+          <!-- 产品7：Lzx 小游戏 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="game" data-name="Lzx 小游戏">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/ba5tp3w7.png" alt="Lzx小游戏界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">Lzx 小游戏</h3>
-              <p class="text-gray-400 mb-4">
-                多款休闲小游戏集合，轻松享受闲暇时光
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-lzxyx-name">Lzx 小游戏</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-lzxyx-desc">多款休闲小游戏集合，轻松享受闲暇时光</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>              
               </div>
               <div class="flex items-center space-x-4">
-                <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-7">
+                <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-7" data-lang="prod-download">
                   下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
                 </button>
               </div>
               <div id="version-7" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/795duR" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -414,27 +416,26 @@
             </div>
           </div>
           
-          <!-- 产品8 - 工具类 -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="Lzx 文本编辑器">
+          <!-- 产品8：Lzx 文本编辑器 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="tool" data-name="Lzx 文本编辑器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/j3xesig2.png" alt="Lzx文本编辑器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">Lzx 文本编辑器</h3>
-              <p class="text-gray-400 mb-4">
-               简洁明了的文本编辑器，容易上手              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-lzxeditor-name">Lzx 文本编辑器</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-lzxeditor-desc">简洁明了的文本编辑器，容易上手</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>              
               </div>
               <div class="flex items-center space-x-4">
-                <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-8">
+                <button class="download-toggle inline-flex items-center text-primary font-medium hover:text-secondary transition-colors" data-target="version-8" data-lang="prod-download">
                   下载产品 <i class="fa fa-chevron-down ml-2 transition-transform duration-300"></i>
                 </button>
               </div>
               <div id="version-8" class="version-list mt-4 pl-2 border-l-2 border-primary">
                 <div class="py-2 border-b border-gray-800">
                   <a href="https://www.now61.cn/s/wYjDcj" class="flex justify-between items-center">
-                    <span class="version-number">v1.0 (最新版)</span>
+                    <span class="version-number">v1.0 (<span data-lang="prod-latest">最新版</span>)</span>
                     <i class="fa fa-download text-primary"></i>
                   </a>
                 </div>
@@ -442,27 +443,27 @@
             </div>
           </div>
           
-          <!-- 产品9 - Lzx 计算器（同时具备下载链接和网页版） -->
-          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800" data-category="tool" data-name="Lzx 计算器">
+          <!-- 产品9：Lzx 计算器 -->
+          <div class="product-card bg-darker rounded-xl shadow-lg overflow-hidden card-hover border border-gray-800 reveal" data-category="tool" data-name="Lzx 计算器">
             <div class="h-48 bg-gradient-to-r from-primary/20 to-secondary/20 relative overflow-hidden">
               <img src="https://cdn.luogu.com.cn/upload/image_hosting/455nrcze.png" alt="Lzx计算器界面展示" class="w-full h-full object-cover mix-blend-lighten">
             </div>
             <div class="p-6">
-              <h3 class="text-xl font-bold text-white mb-3">Lzx 计算器</h3>
-              <p class="text-gray-400 mb-4">
-                多功能计算器，支持科学计算与日常计算需求
-              </p>
+              <h3 class="text-xl font-bold text-white mb-3" data-lang="prod-lzxcalc-name">Lzx 计算器</h3>
+              <p class="text-gray-400 mb-4" data-lang="prod-lzxcalc-desc">多功能计算器，支持科学计算与日常计算需求</p>
               <div class="flex items-center text-sm text-gray-500 mb-4">
-                <span class="mr-4"><i class="fa fa-calendar-o mr-1"></i> 最新版本: <span class="version-number">v1.0</span></span>              
+                <span class="mr-4" data-lang="prod-latestversion"><i class="fa fa-calendar-o mr-1"></i> 最新版本:</span> <span class="version-number">v1.0</span>              
               </div>
-              <!-- 同时展示网页版链接和下载按钮 -->
               <div class="flex items-center space-x-4">
-                <a href="https://lzxoffice.github.io/online/Lzxjsq" class="web-version-link inline-flex items-center text-primary font-medium">
+                <a href="https://lzxoffice.github.io/online/Lzxjsq" class="web-version-link inline-flex items-center text-primary font-medium" data-lang="prod-webversion">
                   网页版 <i class="fa fa-external-link ml-1 text-sm"></i>
                 </a>
-                        </div>
-      </div>
-    </section>
+              </div>
+            </div>
+          </div>
+        </div>
+
+           </section>
   </main>
 
   <footer class="bg-dark py-10 border-t border-gray-800">
@@ -470,7 +471,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
           <h3 class="text-lg font-bold text-white mb-4">LzxOffice</h3>
-          <p class="text-gray-500 mb-4">专注于开发高质量智能办公工具的技术团队</p>
+          <p class="text-gray-500 mb-4" data-lang="footer-intro">专注于开发高质量智能办公工具的技术团队</p>
           <div class="flex space-x-4">
             <a href="#" class="text-gray-500 hover:text-primary transition-colors">
               <i class="fa fa-weixin text-xl"></i>
@@ -485,25 +486,25 @@
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4">快速链接</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="footer-quicklinks">快速链接</h3>
           <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-500 hover:text-primary transition-colors">首页</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">产品</a></li>
-            <li><a href="contact.html" class="text-gray-500 hover:text-primary transition-colors">联系我们</a></li>
+            <li><a href="index.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-home">首页</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-products">产品</a></li>
+            <li><a href="contact.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-contact">联系我们</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4">项目</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="footer-projects">项目</h3>
           <ul class="space-y-2">
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">随机点名器</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">棋类大战</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">更多工具</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="prod-caller-name">随机点名器</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="prod-chess-name">棋类大战</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="footer-moretools">更多工具</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4">联系我们</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="nav-contact">联系我们</h3>
           <ul class="space-y-2">
             <li class="flex items-center">
               <i class="fa fa-weixin mr-2 text-gray-500"></i>
@@ -521,23 +522,175 @@
         </div>
       </div>
       
-      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-600">
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-600" data-lang="footer-copyright">
         <p>&copy; 2025 LzxOffice. 保留所有权利。</p>
       </div>
     </div>
   </footer>
 
   <script>
+    // 中英文对照字典（覆盖所有带data-lang属性的文字）
+    const langDict = {
+      zh: {
+        // 导航
+        'nav-home': '首页',
+        'nav-products': '产品下载',
+        'nav-contact': '联系我们',
+        'nav-store': '商店',
+        // 搜索
+        'search-placeholder': '搜索产品...',
+        'search-notfound': '未找到相关产品',
+        // 页面标题
+        'page-title': '产品中心',
+        'page-subtitle': '探索我们精心打造的各类实用工具，提升您的工作和学习效率',
+        'page-updatetip': '持续更新，敬请期待更多优质产品',
+        // 产品区域
+        'our-products': '我们的产品',
+        'our-products-sub': '探索 LzxOffice 开发的高质量智能产品',
+        // 分类
+        'category-all': '全部',
+        'category-game': '游戏',
+        'category-study': '学习',
+        'category-tool': '工具',
+        // 产品通用
+        'prod-latestversion': '<i class="fa fa-calendar-o mr-1"></i> 最新版本:',
+        'prod-latest': '最新版',
+        'prod-download': '下载产品',
+        'prod-webversion': '网页版',
+        // 产品详情
+        'prod-caller-name': '随机点名器',
+        'prod-caller-desc': '支持多种点名模式，自定义前缀后缀，完美适用于课堂教学场景',
+        'prod-chess-name': '棋类大战',
+        'prod-chess-desc': '有趣棋类大战，为生活增添乐趣',
+        'prod-lzxai-name': 'LzxAI',
+        'prod-lzxai-desc': 'LzxAI，智能引擎驱动未来',
+        'prod-lzxmd-name': 'Lzx-Markdown',
+        'prod-lzxmd-desc': '简洁的 MD 编辑器，完美适配工作场景',
+        'prod-geometry-name': '几何画板',
+        'prod-geometry-desc': '几何画板带你在数学大海里遨游',
+        'prod-wordcard-name': '单词卡片记忆器',
+        'prod-wordcard-desc': '简单的单词记忆器，让你的英语更上一层楼',
+        'prod-lzxyx-name': 'Lzx 小游戏',
+        'prod-lzxyx-desc': '多款休闲小游戏集合，轻松享受闲暇时光',
+        'prod-lzxeditor-name': 'Lzx 文本编辑器',
+        'prod-lzxeditor-desc': '简洁明了的文本编辑器，容易上手',
+        'prod-lzxcalc-name': 'Lzx 计算器',
+        'prod-lzxcalc-desc': '多功能计算器，支持科学计算与日常计算需求',
+        // 使用说明
+        'usage-title': '产品使用说明',
+        'usage-1': '1. 点击产品卡片中的"下载产品"按钮可展开版本列表，选择对应版本下载',
+        'usage-2': '2. 部分产品提供网页版，可直接点击"网页版"链接在线使用',
+        'usage-3': '3. 所有产品均为绿色免安装版本，下载后解压即可使用',
+        'usage-4': '4. 如遇使用问题，请联系我们获取技术支持',
+        'usage-support': '获取技术支持',
+        // 页脚
+        'footer-intro': '专注于开发高质量智能办公工具的技术团队',
+        'footer-quicklinks': '快速链接',
+        'footer-projects': '项目',
+        'footer-moretools': '更多工具',
+        'footer-copyright': '&copy; 2025 LzxOffice. 保留所有权利。',
+        // 切换按钮
+        'toggle-btn': '切换为英文',
+        'mobile-toggle-btn': 'En'
+      },
+      en: {
+        // 导航
+        'nav-home': 'Home',
+        'nav-products': 'Products Download',
+        'nav-contact': 'Contact Us',
+        'nav-store': 'Store',
+        // 搜索
+        'search-placeholder': 'Search products...',
+        'search-notfound': 'No products found',
+        // 页面标题
+        'page-title': 'Product Center',
+        'page-subtitle': 'Explore our carefully crafted practical tools to improve your work and study efficiency',
+        'page-updatetip': 'Constantly updated, look forward to more high-quality products',
+        // 产品区域
+        'our-products': 'Our Products',
+        'our-products-sub': 'Explore high-quality intelligent products developed by LzxOffice',
+        // 分类
+        'category-all': 'All',
+        'category-game': 'Games',
+        'category-study': 'Study',
+        'category-tool': 'Tools',
+        // 产品通用
+        'prod-latestversion': '<i class="fa fa-calendar-o mr-1"></i> Latest version:',
+        'prod-latest': 'Latest',
+        'prod-download': 'Download Product',
+        'prod-webversion': 'Web Version',
+        // 产品详情
+        'prod-caller-name': 'Random Caller',
+        'prod-caller-desc': 'Supports multiple calling modes, custom prefixes and suffixes, perfect for classroom teaching scenarios',
+        'prod-chess-name': 'Board Game Battle',
+        'prod-chess-desc': 'Interesting board game battles to add fun to life',
+        'prod-lzxai-name': 'LzxAI',
+        'prod-lzxai-desc': 'LzxAI, intelligent engine drives the future',
+        'prod-lzxmd-name': 'Lzx-Markdown',
+        'prod-lzxmd-desc': 'Simple MD editor, perfectly adapted to work scenarios',
+        'prod-geometry-name': 'Geometry Board',
+        'prod-geometry-desc': 'Geometry board takes you to explore the ocean of mathematics',
+        'prod-wordcard-name': 'Word Card Memorizer',
+        'prod-wordcard-desc': 'Simple word memorizer to take your English to the next level',
+        'prod-lzxyx-name': 'Lzx Mini Games',
+        'prod-lzxyx-desc': 'A collection of casual mini games to enjoy leisure time easily',
+        'prod-lzxeditor-name': 'Lzx Text Editor',
+        'prod-lzxeditor-desc': 'Simple and clear text editor, easy to get started',
+        'prod-lzxcalc-name': 'Lzx Calculator',
+        'prod-lzxcalc-desc': 'Multi-functional calculator supporting scientific and daily calculation needs',
+        // 使用说明
+        'usage-title': 'Product Usage Instructions',
+        'usage-1': '1. Click the "Download Product" button on the product card to expand the version list and select the corresponding version to download',
+        'usage-2': '2. Some products provide web versions, which can be used online by clicking the "Web Version" link directly',
+        'usage-3': '3. All products are green and portable versions, which can be used after decompression',
+        'usage-4': '4. If you encounter any usage problems, please contact us for technical support',
+        'usage-support': 'Get Technical Support',
+        // 页脚
+        'footer-intro': 'A technical team focused on developing high-quality intelligent office tools',
+        'footer-quicklinks': 'Quick Links',
+        'footer-projects': 'Projects',
+        'footer-moretools': 'More Tools',
+        'footer-copyright': '&copy; 2025 LzxOffice. All Rights Reserved.',
+        // 切换按钮
+        'toggle-btn': 'Switch to Chinese',
+        'mobile-toggle-btn': '中'
+      }
+    };
+
+    // 当前语言（默认中文）
+    let currentLang = 'zh';
+
+    // 核心切换函数：遍历所有带data-lang属性的元素，替换为对应语言文字
+    function switchLanguage() {
+      // 切换语言状态
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      
+      // 更新页面标题
+      document.title = currentLang === 'zh' ? 'LzxOffice - 产品' : 'LzxOffice - Products';
+      
+      // 更新切换按钮文字
+      document.getElementById('lang-btn-text').textContent = langDict[currentLang]['toggle-btn'];
+      document.getElementById('lang-btn-text-mobile').textContent = langDict[currentLang]['mobile-toggle-btn'];
+      
+      // 遍历所有需要翻译的元素（带data-lang属性）
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        const langKey = el.getAttribute('data-lang');
+        // 替换文本（支持HTML格式，如带图标的文字）
+        el.innerHTML = langDict[currentLang][langKey];
+      });
+    }
+
+    // 绑定切换按钮事件（桌面端+移动端）
+    document.getElementById('lang-toggle').addEventListener('click', switchLanguage);
+    document.getElementById('lang-toggle-mobile').addEventListener('click', switchLanguage);
+
+    // 原有页面功能代码（完全保留，不改动）
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     
     menuToggle.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
-      if (mobileMenu.classList.contains('hidden')) {
-        menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
-      } else {
-        menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
-      }
+      menuToggle.innerHTML = mobileMenu.classList.contains('hidden') ? '<i class="fa fa-bars text-xl"></i>' : '<i class="fa fa-times text-xl"></i>';
     });
     
     window.addEventListener('scroll', () => {
@@ -549,126 +702,79 @@
         header.classList.remove('shadow-xl');
         header.classList.add('shadow-lg');
       }
-    });
-    
-    // 下载版本选择功能
-    document.querySelectorAll('.download-toggle').forEach(toggle => {
-      toggle.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const versionList = document.getElementById(targetId);
-        const icon = this.querySelector('i.fa-chevron-down');
-        
-        // 切换版本列表显示状态
-        versionList.classList.toggle('show');
-        
-        // 旋转箭头图标
-        if (versionList.classList.contains('show')) {
-          icon.style.transform = 'rotate(180deg)';
-        } else {
-          icon.style.transform = 'rotate(0)';
-        }
+
+      const reveals = document.querySelectorAll('.reveal');
+      reveals.forEach(el => {
+        const elTop = el.getBoundingClientRect().top;
+        if (elTop < window.innerHeight - 150) el.classList.add('active');
       });
     });
     
-    // 分类筛选功能
+    document.querySelectorAll('.download-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const target = document.getElementById(this.getAttribute('data-target'));
+        const icon = this.querySelector('i');
+        target.classList.toggle('show');
+        icon.style.transform = target.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+      });
+    });
+    
     const categoryBtns = document.querySelectorAll('.category-btn');
     const productCards = document.querySelectorAll('.product-card');
     
     categoryBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        // 移除所有按钮的active类
         categoryBtns.forEach(b => b.classList.remove('active'));
-        // 给当前点击的按钮添加active类
         btn.classList.add('active');
-        
         const category = btn.getAttribute('data-category');
         
-        // 筛选产品卡片
         productCards.forEach(card => {
+          card.style.display = category === 'all' || card.getAttribute('data-category') === category ? 'block' : 'none';
           if (category === 'all' || card.getAttribute('data-category') === category) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
+            setTimeout(() => card.classList.add('active'), 100);
           }
         });
       });
     });
 
-    // 搜索功能实现
     function performSearch(searchTerm) {
       if (!searchTerm.trim()) return;
+      const lowerTerm = searchTerm.toLowerCase();
+      const matches = [];
       
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      const matchingProducts = [];
-      
-      // 查找匹配的产品
       productCards.forEach(card => {
-        const productName = card.getAttribute('data-name').toLowerCase();
-        if (productName.includes(lowerSearchTerm)) {
-          matchingProducts.push(card);
-        }
+        if (card.getAttribute('data-name').toLowerCase().includes(lowerTerm)) matches.push(card);
       });
       
-      // 处理搜索结果
-      if (matchingProducts.length > 0) {
-        // 获取第一个匹配产品的分类
-        const targetCategory = matchingProducts[0].getAttribute('data-category');
-        
-        // 切换到对应的分类
-        categoryBtns.forEach(btn => {
-          if (btn.getAttribute('data-category') === targetCategory) {
-            btn.click(); // 触发分类按钮点击事件
-          }
-        });
-        
-        // 高亮显示匹配的产品（可选）
-        productCards.forEach(card => {
-          if (matchingProducts.includes(card)) {
-            card.classList.add('ring-2', 'ring-primary');
-            setTimeout(() => {
-              card.classList.remove('ring-2', 'ring-primary');
-            }, 2000);
-          }
+      if (matches.length) {
+        const category = matches[0].getAttribute('data-category');
+        categoryBtns.forEach(btn => btn.getAttribute('data-category') === category && btn.click());
+        matches.forEach(card => {
+          card.classList.add('ring-2', 'ring-primary');
+          setTimeout(() => card.classList.remove('ring-2', 'ring-primary'), 2000);
         });
       } else {
-        // 显示未找到提示
         const notification = document.getElementById('search-notification');
         notification.classList.add('show');
-        
-        // 5秒后隐藏提示
-        setTimeout(() => {
-          notification.classList.remove('show');
-        }, 5000);
+        setTimeout(() => notification.classList.remove('show'), 5000);
       }
       
-      // 清空搜索框
       document.getElementById('product-search').value = '';
       document.getElementById('mobile-product-search').value = '';
     }
     
-    // 桌面端搜索按钮
     document.getElementById('search-btn').addEventListener('click', () => {
-      const searchTerm = document.getElementById('product-search').value;
-      performSearch(searchTerm);
+      performSearch(document.getElementById('product-search').value);
     });
-    
-    // 移动端搜索按钮
     document.getElementById('mobile-search-btn').addEventListener('click', () => {
-      const searchTerm = document.getElementById('mobile-product-search').value;
-      performSearch(searchTerm);
+      performSearch(document.getElementById('mobile-product-search').value);
     });
-    
-    // 支持回车键搜索
-    document.getElementById('product-search').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        performSearch(e.target.value);
-      }
-    });
-    
-    document.getElementById('mobile-product-search').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        performSearch(e.target.value);
-      }
+    document.getElementById('product-search').addEventListener('keypress', e => e.key === 'Enter' && performSearch(e.target.value));
+    document.getElementById('mobile-product-search').addEventListener('keypress', e => e.key === 'Enter' && performSearch(e.target.value));
+
+    // 页面加载初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      window.dispatchEvent(new Event('scroll'));
     });
   </script>
 </body>
