@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -21,15 +22,13 @@
           },
           fontFamily: {
             inter: ['Inter', 'system-ui', 'sans-serif'],
-            tech: ['Orbitron', 'Inter', 'sans-serif'], // 科技感字体
+            mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace']
+            // 移除 tech 字体配置
           },
         },
       }
     }
   </script>
-  
-  <!-- 引入科技感字体 -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style type="text/tailwindcss">
     @layer utilities {
@@ -37,10 +36,7 @@
         content-visibility: auto;
       }
       .text-shadow {
-        text-shadow: 0 0 10px rgba(14, 165, 233, 0.5), 0 2px 4px rgba(0,0,0,0.3);
-      }
-      .text-shadow-sm {
-        text-shadow: 0 0 5px rgba(14, 165, 233, 0.3);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
       .bg-gradient-tech {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -56,21 +52,6 @@
         backdrop-filter: blur(8px);
         background-color: rgba(15, 23, 42, 0.8);
       }
-      .tech-border {
-        position: relative;
-      }
-      .tech-border::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: 1px solid rgba(14, 165, 233, 0.3);
-        box-shadow: 0 0 15px rgba(14, 165, 233, 0.1);
-        pointer-events: none;
-      }
-      /* 动画相关样式 */
       .reveal {
         opacity: 0;
         transform: translateY(20px);
@@ -80,52 +61,47 @@
         opacity: 1;
         transform: translateY(0);
       }
-      .char {
-        display: inline-block;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeInUp 0.5s forwards;
-      }
-      @keyframes fadeInUp {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .pulse-glow {
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0%, 100% {
-          box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
-        }
-        50% {
-          box-shadow: 0 0 20px rgba(14, 165, 233, 0.8);
-        }
+      /* 语言切换按钮样式 */
+      .lang-toggle-btn {
+        @apply px-4 py-1.5 rounded-md transition-all duration-300 bg-primary/10 hover:bg-primary/30 text-light flex items-center gap-2;
       }
     }
   </style>
+  <!-- 移除 Orbitron 字体引入 -->
 </head>
 
 <body class="font-inter bg-darker text-light min-h-screen flex flex-col">
   <header class="sticky top-0 z-50 glass-effect shadow-lg transition-all duration-300">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-6">
           <a href="index.html" class="flex items-center space-x-2">
             <i class="fa fa-bolt text-primary text-2xl"></i>
-            <span class="font-bold text-xl text-white font-tech">LzxOffice</span>
+            <span class="font-bold text-xl text-white">LzxOffice</span> <!-- 移除 font-tech -->
           </a>
         </div>
         
+        <!-- 语言切换按钮（桌面端） -->
+        <div class="hidden md:flex items-center mr-4">
+          <button id="lang-toggle" class="lang-toggle-btn">
+            <i class="fa fa-globe text-primary"></i>
+            <span id="lang-btn-text">切换为英文</span>
+          </button>
+        </div>
+        
         <nav class="hidden md:flex space-x-8">
-          <a href="index.html" class="text-primary font-medium hover:text-primary transition-colors font-tech">首页</a>
-          <a href="products.html" class="text-gray-300 font-medium hover:text-secondary transition-colors font-tech">产品下载</a>
-          <a href="contact.html" class="text-gray-300 font-medium hover:text-primary transition-colors font-tech">联系我们</a>
-          <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary font-tech">商店</a>
+          <a href="index.html" class="text-primary font-medium hover:text-secondary transition-colors" data-lang="nav-home">首页</a> <!-- 移除 font-tech -->
+          <a href="products.html" class="text-gray-300 font-medium hover:text-primary transition-colors" data-lang="nav-products">产品下载</a> <!-- 移除 font-tech -->
+          <a href="contact.html" class="text-gray-300 font-medium hover:text-primary transition-colors" data-lang="nav-contact">联系我们</a> <!-- 移除 font-tech -->
+          <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-store">商店</a> <!-- 移除 font-tech -->
         </nav>
         
-        <div class="md:hidden">
+        <div class="md:hidden flex items-center space-x-3">
+          <!-- 语言切换按钮（移动端） -->
+          <button id="lang-toggle-mobile" class="lang-toggle-btn text-sm px-2 py-1">
+            <i class="fa fa-globe text-primary text-sm"></i>
+            <span id="lang-btn-text-mobile">En</span>
+          </button>
           <button id="menu-toggle" class="text-gray-300 hover:text-primary focus:outline-none">
             <i class="fa fa-bars text-xl"></i>
           </button>
@@ -135,57 +111,42 @@
     
     <div id="mobile-menu" class="hidden md:hidden glass-effect border-t border-gray-800">
       <div class="container mx-auto px-4 py-3 space-y-3">
-        <a href="index.html" class="block text-primary font-medium hover:text-primary font-tech">首页</a>
-        <a href="products.html" class="block text-gray-300 font-medium font-tech">产品下载</a>
-        <a href="contact.html" class="block text-gray-300 font-medium hover:text-primary font-tech">联系我们</a>
-        <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary font-tech">商店</a>
+        <a href="index.html" class="block text-primary font-medium" data-lang="nav-home">首页</a> <!-- 移除 font-tech -->
+        <a href="products.html" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-products">产品下载</a> <!-- 移除 font-tech -->
+        <a href="contact.html" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-contact">联系我们</a> <!-- 移除 font-tech -->
+        <a href="https://shop.xiaoman.top/links/CD9B9B84" class="block text-gray-300 font-medium hover:text-primary" data-lang="nav-store">商店</a> <!-- 移除 font-tech -->
       </div>
     </div>
   </header>
 
   <main class="flex-grow">
     <section class="relative py-20 md:py-32 overflow-hidden bg-gradient-tech">
-      <!-- 科技感背景装饰 -->
       <div class="absolute inset-0 opacity-10">
-        <div class="absolute -right-20 -top-20 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
-        <div class="absolute left-1/4 bottom-10 w-64 h-64 rounded-full bg-primary blur-3xl"></div>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxZTI5M2IiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTE1IDM1TDI1IDQ1TDM1IDM1TDQ1IDQ1TDU1IDM1IiBmaWxsPSIjMGVhNWU5Ii8+PC9nPjwvZz48L3N2Zz4=')]"></div>
+        <div class="absolute -left-20 top-10 w-80 h-80 rounded-full bg-primary blur-3xl"></div>
+        <div class="absolute right-1/4 bottom-0 w-60 h-60 rounded-full bg-primary blur-3xl"></div>
       </div>
-      
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div class="max-w-3xl mx-auto text-center">
-          <!-- 主标题 - 逐字动画 -->
-          <h1 id="main-title" class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-white leading-tight text-shadow mb-6 font-tech">
-            LZX<span class="text-primary">工作室</span>
-          </h1>
-          
-          <!-- 副标题 - 延迟动画 -->
-          <p id="sub-title" class="reveal text-[clamp(1rem,2vw,1.25rem)] text-gray-300 mb-8 text-shadow-sm font-tech">
-            专注于开发高效 HTML 实用工具的工作室
-          </p>
-          
-          <!-- 按钮 - 最后出现的动画 -->
-          <div id="cta-button" class="reveal flex flex-col sm:flex-row justify-center gap-4">
-            <a href="products.html" class="inline-block bg-primary text-white font-medium px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 pulse-glow font-tech tech-border">
-              浏览产品 <i class="fa fa-arrow-right ml-2"></i>
+        <div class="max-w-4xl mx-auto text-center reveal">
+          <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-white mb-6 text-shadow" data-lang="hero-title">LZX 工作室</h1> <!-- 移除 font-tech -->
+          <p class="text-[clamp(1rem,2vw,1.25rem)] text-gray-300 mb-8 max-w-2xl mx-auto" data-lang="hero-subtitle">专注于开发高效 HTML 实用工具的工作室</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="products.html" class="inline-block bg-primary text-white font-medium px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1" data-lang="hero-btn1"> <!-- 移除 font-tech -->
+              探索产品 <i class="fa fa-arrow-right ml-2"></i>
             </a>
-<a href="contact.html" class="inline-block bg-primary text-white font-medium px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 pulse-glow font-tech tech-border">
-              联系我们 <i class="fa fa-arrow-right ml-2"></i>
+            <a href="contact.html" class="inline-block bg-dark/50 border border-gray-700 text-white font-medium px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1" data-lang="hero-btn2"> <!-- 移除 font-tech -->
+              联系我们 <i class="fa fa-headphones ml-2"></i>
             </a>
-
           </div>
-
         </div>
       </div>
     </section>
-  </main>
 
-  <footer class="bg-dark py-10 border-t border-gray-800">
+      <footer class="bg-dark py-10 border-t border-gray-800">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 class="text-lg font-bold text-white mb-4 font-tech">LzxOffice</h3>
-          <p class="text-gray-500 mb-4">专注于开发高质量智能办公工具的技术团队</p>
+          <h3 class="text-lg font-bold text-white mb-4">LzxOffice</h3> <!-- 移除 font-tech -->
+          <p class="text-gray-500 mb-4" data-lang="footer-intro">专注于开发高质量智能办公工具的技术团队</p>
           <div class="flex space-x-4">
             <a href="#" class="text-gray-500 hover:text-primary transition-colors">
               <i class="fa fa-weixin text-xl"></i>
@@ -200,25 +161,25 @@
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4 font-tech">快速链接</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="footer-quicklinks">快速链接</h3> <!-- 移除 font-tech -->
           <ul class="space-y-2">
-            <li><a href="index.html" class="text-gray-500 hover:text-primary transition-colors">首页</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">产品</a></li>
-            <li><a href="contact.html" class="text-gray-500 hover:text-primary transition-colors">联系我们</a></li>
+            <li><a href="index.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-home">首页</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-products">产品</a></li>
+            <li><a href="contact.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="nav-contact">联系我们</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4 font-tech">项目</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="footer-projects">项目</h3> <!-- 移除 font-tech -->
           <ul class="space-y-2">
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">随机点名器</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">棋类大战</a></li>
-            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors">更多工具</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="prod-caller-name">随机点名器</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="prod-chess-name">棋类大战</a></li>
+            <li><a href="products.html" class="text-gray-500 hover:text-primary transition-colors" data-lang="footer-moretools">更多工具</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="text-lg font-bold text-white mb-4 font-tech">联系我们</h3>
+          <h3 class="text-lg font-bold text-white mb-4" data-lang="nav-contact">联系我们</h3> <!-- 移除 font-tech -->
           <ul class="space-y-2">
             <li class="flex items-center">
               <i class="fa fa-weixin mr-2 text-gray-500"></i>
@@ -236,28 +197,123 @@
         </div>
       </div>
       
-      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-600">
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-600" data-lang="footer-copyright">
         <p>&copy; 2025 LzxOffice. 保留所有权利。</p>
       </div>
     </div>
   </footer>
 
-
   <script>
-    // 移动端菜单切换
+    // 中英文对照字典
+    const langDict = {
+      zh: {
+        // 导航
+        'nav-home': '首页',
+        'nav-products': '产品下载',
+        'nav-contact': '联系我们',
+        'nav-store': '商店',
+        // 首页英雄区
+        'hero-title': 'LZX 工作室',
+        'hero-subtitle': '专注于开发高效 HTML 实用工具的工作室',
+        'hero-btn1': '探索产品',
+        'hero-btn2': '联系我们',
+        // 核心优势
+        'features-title': '核心优势',
+        'features-subtitle': '我们的产品为您带来极致的使用体验',
+        'feature-1-title': '轻量高效',
+        'feature-1-desc': '无冗余功能，专注核心体验，启动速度快，运行流畅',
+        'feature-2-title': '安全可靠',
+        'feature-2-desc': '绿色免安装，无广告无捆绑，保护您的隐私安全',
+        'feature-3-title': '功能强大',
+        'feature-3-desc': '满足多样化使用场景，持续更新迭代，优化用户体验',
+        // 行动召唤
+        'cta-title': '开始使用 LzxOffice',
+        'cta-subtitle': '立即体验我们的产品，提升您的工作和学习效率',
+        'cta-btn': '下载产品',
+        // 页脚
+        'footer-intro': '专注于开发高质量智能办公工具的技术团队',
+        'footer-quicklinks': '快速链接',
+        'footer-projects': '项目',
+        'prod-caller-name': '随机点名器',
+        'prod-chess-name': '棋类大战',
+        'footer-moretools': '更多工具',
+        'footer-copyright': '&copy; 2025 LzxOffice. 保留所有权利。',
+        // 切换按钮
+        'toggle-btn': '切换为英文',
+        'mobile-toggle-btn': 'En'
+      },
+      en: {
+        // 导航
+        'nav-home': 'Home',
+        'nav-products': 'Products Download',
+        'nav-contact': 'Contact Us',
+        'nav-store': 'Store',
+        // 首页英雄区
+        'hero-title': 'LZX Office',
+        'hero-subtitle': 'A team focused on developing efficient HTML tools',
+        'hero-btn1': 'Explore Products',
+        'hero-btn2': 'Contact Us',
+        // 核心优势
+        'features-title': 'Core Advantages',
+        'features-subtitle': 'Our products bring you an ultimate user experience',
+        'feature-1-title': 'Lightweight & Efficient',
+        'feature-1-desc': 'No redundant functions, focus on core experience, fast startup and smooth operation',
+        'feature-2-title': 'Safe & Reliable',
+        'feature-2-desc': 'Green and portable, no ads or bundling, protect your privacy and security',
+        'feature-3-title': 'Powerful Functions',
+        'feature-3-desc': 'Meet diverse usage scenarios, continuous updates and iterations, optimize user experience',
+        // 行动召唤
+        'cta-title': 'Start Using LzxOffice',
+        'cta-subtitle': 'Experience our products now and improve your work and study efficiency',
+        'cta-btn': 'Download Products',
+        // 页脚
+        'footer-intro': 'A technical team focused on developing high-quality intelligent office tools',
+        'footer-quicklinks': 'Quick Links',
+        'footer-projects': 'Projects',
+        'prod-caller-name': 'Random Caller',
+        'prod-chess-name': 'Board Game Battle',
+        'footer-moretools': 'More Tools',
+        'footer-copyright': '&copy; 2025 LzxOffice. All Rights Reserved.',
+        // 切换按钮
+        'toggle-btn': 'Switch to Chinese',
+        'mobile-toggle-btn': '中'
+      }
+    };
+
+    // 当前语言（默认中文）
+    let currentLang = 'zh';
+
+    // 核心切换函数
+    function switchLanguage() {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      
+      // 更新页面标题
+      document.title = currentLang === 'zh' ? 'LzxOffice - 首页' : 'LzxOffice - Home';
+      
+      // 更新切换按钮文字
+      document.getElementById('lang-btn-text').textContent = langDict[currentLang]['toggle-btn'];
+      document.getElementById('lang-btn-text-mobile').textContent = langDict[currentLang]['mobile-toggle-btn'];
+      
+      // 遍历所有需要翻译的元素
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        const langKey = el.getAttribute('data-lang');
+        el.innerHTML = langDict[currentLang][langKey];
+      });
+    }
+
+    // 绑定切换按钮事件
+    document.getElementById('lang-toggle').addEventListener('click', switchLanguage);
+    document.getElementById('lang-toggle-mobile').addEventListener('click', switchLanguage);
+
+    // 原有页面功能代码
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     
     menuToggle.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
-      if (mobileMenu.classList.contains('hidden')) {
-        menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
-      } else {
-        menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
-      }
+      menuToggle.innerHTML = mobileMenu.classList.contains('hidden') ? '<i class="fa fa-bars text-xl"></i>' : '<i class="fa fa-times text-xl"></i>';
     });
     
-    // 滚动时导航栏效果
     window.addEventListener('scroll', () => {
       const header = document.querySelector('header');
       if (window.scrollY > 50) {
@@ -267,31 +323,18 @@
         header.classList.remove('shadow-xl');
         header.classList.add('shadow-lg');
       }
-    });
-    
-    // 主标题逐字动画
-    document.addEventListener('DOMContentLoaded', () => {
-      const mainTitle = document.getElementById('main-title');
-      const text = mainTitle.textContent;
-      mainTitle.textContent = '';
-      
-      // 将每个字符包装成span元素
-      text.split('').forEach((char, index) => {
-        const span = document.createElement('span');
-        span.className = 'char';
-        span.textContent = char;
-        span.style.animationDelay = `${index * 0.1}s`; // 每个字符延迟0.1秒出现
-        mainTitle.appendChild(span);
+
+      const reveals = document.querySelectorAll('.reveal');
+      reveals.forEach(el => {
+        const elTop = el.getBoundingClientRect().top;
+        if (elTop < window.innerHeight - 150) el.classList.add('active');
       });
-      
-      // 副标题延迟出现
-      setTimeout(() => {
-        document.getElementById('sub-title').classList.add('active');
-      }, text.length * 100 + 100);      
-      // 按钮最后出现
-      setTimeout(() => {
-        document.getElementById('cta-button').classList.add('active');
-      }, text.length * 100 + 100);    });
+    });
+
+    // 页面加载初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      window.dispatchEvent(new Event('scroll'));
+    });
   </script>
 </body>
 </html>
