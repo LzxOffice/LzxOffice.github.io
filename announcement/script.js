@@ -11,13 +11,13 @@ const translations = {
     "announcement.backToList": "← 返回公告首页",
     "announcement.detailTitle": "新增公告功能通知",
     "announcement.content1": "尊敬的用户：",
-    "announcement.content2": "为提升平台使用体验，我们已于2026年3月4日完成公告功能的全新升级，本次升级包含以下核心优化：",
-    "announcement.content3": "1. 公告列表支持按发布时间、类型筛选，快速定位所需信息；",
-    "announcement.content4": "2. 新增公告已读状态标记，重要信息不遗漏；",
-    "announcement.content5": "3. 移动端适配优化，公告内容展示更清晰；",
-    "announcement.content6": "如在使用过程中遇到任何问题，可通过平台客服通道反馈，我们将及时处理。",
+    "announcement.content2": "为提升平台使用体验，我们已于 2026 年 3 月 4 日完成公告功能的初步开发，详情如下：",
+    "announcement.content3": "1. 公告页面 UI 与主页面保持大致相同；",
+    "announcement.content4": "2. 公告页面支持与主页面相同的中英切换功能；",
+    "announcement.content5": "3. 之后的更新与升级将在公告同步；",
+    "announcement.content6": "如在使用过程中遇到任何问题，可通过联系工作室人员反馈，我们将及时处理。",
     "announcement.content7": "感谢您的支持与理解！",
-    "announcement.content8": "LzxOffice 运营团队<br>2026年3月4日"
+    "announcement.content8": "LzxOffice 团队<br>2026 年 3 月 4 日"
   },
   en: {
     "announcement.listTitle": "Latest Announcements",
@@ -30,13 +30,13 @@ const translations = {
     "announcement.backToList": "← Back to Announcement Home",
     "announcement.detailTitle": "New Announcement Function Notification",
     "announcement.content1": "Dear Users:",
-    "announcement.content2": "To improve the platform experience, we completed the full upgrade of the announcement function on March 4, 2026. The upgrade includes the following core optimizations:",
-    "announcement.content3": "1. The announcement list supports filtering by release time and type for quick access to required information;",
-    "announcement.content4": "2. Added read status marking for announcements to ensure important information is not missed;",
-    "announcement.content5": "3. Optimized mobile adaptation for clearer display of announcement content;",
-    "announcement.content6": "If you encounter any issues during use, please feedback through the platform customer service channel, and we will handle it in a timely manner.",
+    "announcement.content2": "To improve the platform experience, we developed the announcement function on March 4, 2026. Here are the details:",
+    "announcement.content3": "1. The UI of the announcement pages is similar to the UI in the main pages;",
+    "announcement.content4": "2. Translation between Chinese and English are supported in the announcement pages, just as the main ones;",
+    "announcement.content5": "3. The upgrade in the future will announce you in the announcement pages, and the links in the upgrade publicities will be announcement links, too.",
+    "announcement.content6": "If you encounter any issues during use, please connect with the workers of LzxOffice to give your feedback, and we will handle it in a timely manner.",
     "announcement.content7": "Thank you for your support and understanding!",
-    "announcement.content8": "LzxOffice Operation Team<br>March 4, 2026"
+    "announcement.content8": "LzxOffice Team<br>March 4, 2026"
   }
 };
 
