@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>箱线图生成器</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+body {
+    background-color: #f0f4f9;
+    padding: 30px 20px;
+}
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+h3 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+.desc {
+    text-align: center;
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+textarea {
+    width: 100%;
+    height: 140px;
+    padding: 15px;
+    border: 1px solid #dde3ec;
+    border-radius: 10px;
+    font-size: 16px;
+    resize: none;
+    background: #f8fafc;
+}
+textarea:focus {
+    outline: none;
+    border-color: #409eff;
+    box-shadow: 0 0 0 3px rgba(64,158,255,0.15);
+}
+.btn {
+    display: block;
+    width: 200px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    background: linear-gradient(135deg, #409eff, #2274dd);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 18px auto;
+    cursor: pointer;
+}
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(64,158,255,0.25);
+}
+#info {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #333;
+    background: #f5f8fc;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    max-height: 180px;
+    overflow-y: auto;
+}
+canvas {
+    width: 100%;
+    border: 1px solid #e5eaf3;
+    border-radius: 10px;
+    background: #fff;
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h3>箱线图生成器</h3>
+    <p class="desc">一行一组数据，空格分隔，每组至少 4 个数字</p>
+    <textarea id="dataInput" placeholder="示例：
+12 15 18 20 22 25
+8 10 13 16 19 21
+25 27 29 32 35 38"></textarea>
+    <button class="btn" onclick="draw()">生成箱线图</button>
+    <div id="info"></div>
+    <canvas id="boxCanvas" width="850" height="480"></canvas>
+</div>
+
+<script>
+// 课本标准四分位数算法
+function calcQuartile(arr){
+  let a = [...arr].sort((x,y)=>x-y);
+  let n = a.length;
+  let getPer = per => {
+    let pos = (n-1)*per;
+    let i = Math.floor(pos);
+    let w = pos - i;
+    return a[i] + w*(a[i+1]-a[i]);
+  };
+  return {
+    min: parseFloat(a[0].toFixed(2)),
+    max: parseFloat(a[n-1].toFixed(2)),
+    Q1: parseFloat(getPer(0.25).toFixed(2)),
+    Q2: parseFloat(getPer(0.5).toFixed(2)),
+    Q3: parseFloat(getPer(0.75).toFixed(2))
+  };
+}
+
+const colors = ['#409eff','#67c23a','#e6a23c','#f56c6c','#9b59b6','#1abc9c'];
+
+function draw(){
+  let input = document.getElementById("dataInput").value;
+  let lines = input.trim().split('\n').filter(x=>x.trim());
+  let groups = [];
+
+  for(let line of lines){
+    let row = line.trim().split(/\s+/).map(Number).filter(x=>!isNaN(x));
+    if(row.length < 4){
+      alert(`有一组数据少于 4 个数值，无法绘制！`);
+      return;
+    }
+    groups.push(calcQuartile(row));
+  }
+
+  // 下方文字明细
+  let info = "";
+  groups.forEach((g,i)=>{
+    info += `第 ${i+1} 组：最小 ${g.min}，Q1 = ${g.Q1}，中位数 ${g.Q2}，Q3 = ${g.Q3}，最大 ${g.max}<br>`;
+  });
+  document.getElementById("info").innerHTML = info;
+
+  let canvas = document.getElementById("boxCanvas");
+  let ctx = canvas.getContext("2d");
+  let W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // 边距（给纵轴留出空间）
+  let padLeft = 80;
+  let padRight = 30;
+  let padTop = 40;
+  let padBottom = 50;
+
+  let allMin = Math.min(...groups.map(g=>g.min));
+  let allMax = Math.max(...groups.map(g=>g.max));
+  let range = allMax - allMin || 1;
+
+  // 坐标转换函数：数值转画布Y坐标
+  let y = v => padTop + (H - padTop - padBottom) * (1 - (v - allMin) / range);
+  let stepX = (W - padLeft - padRight) / (groups.length + 1);
+  let boxW = 50;
+
+  // ========== 绘制纵轴与刻度 ==========
+  ctx.strokeStyle="#333";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padLeft, padTop);
+  ctx.lineTo(padLeft, H - padBottom);
+  ctx.stroke();
+
+  // 刻度线与数值
+  ctx.font = "12px Microsoft YaHei";
+  ctx.textAlign = "right";
+  ctx.fillStyle="#333";
+  let tickCount = 6; // 刻度数量
+  for(let i=0; i<=tickCount; i++){
+    let val = allMin + range * i / tickCount;
+    let yy = y(val);
+    // 刻度线
+    ctx.beginPath();
+    ctx.moveTo(padLeft - 5, yy);
+    ctx.lineTo(padLeft, yy);
+    ctx.stroke();
+    // 数值标注
+    ctx.fillText(val.toFixed(2), padLeft - 8, yy + 4);
+  }
+
+  // 纵轴标签
+  ctx.save();
+  ctx.translate(15, H/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign = "center";
+  ctx.fillStyle="#666";
+  ctx.font = "14px Microsoft YaHei";
+  ctx.fillText("数值", 0, 0);
+  ctx.restore();
+
+  // 背景横线刻度
+  ctx.strokeStyle="#eee";
+  ctx.lineWidth=1;
+  for(let i=0;i<=tickCount;i++){
+    let val = allMin + range*i/tickCount;
+    let yy = y(val);
+    ctx.beginPath();
+    ctx.moveTo(padLeft, yy);
+    ctx.lineTo(W-padRight, yy);
+    ctx.stroke();
+  }
+
+  // ========== 绘制箱线图 ==========
+  ctx.textAlign = "left";
+  groups.forEach((g, idx)=>{
+    let c = colors[idx % colors.length];
+    let cx = padLeft + stepX*(idx+1);
+    let tx = cx + 30;
+
+    // 画须
+    ctx.strokeStyle=c;
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(cx,y(g.min));ctx.lineTo(cx,y(g.Q1));
+    ctx.moveTo(cx,y(g.Q3));ctx.lineTo(cx,y(g.max));
+    ctx.stroke();
+
+    // 箱体
+    ctx.fillStyle=c+"33";
+    ctx.beginPath();
+    ctx.rect(cx-boxW/2, y(g.Q3), boxW, y(g.Q1)-y(g.Q3));
+    ctx.fill();
+    ctx.strokeStyle=c;
+    ctx.stroke();
+
+    // 中位数红线
+    ctx.strokeStyle="#f56c6c";
+    ctx.beginPath();
+    ctx.moveTo(cx-boxW/2,y(g.Q2));
+    ctx.lineTo(cx+boxW/2,y(g.Q2));
+    ctx.stroke();
+
+    // 标注文字（错开避免重叠）
+    ctx.fillStyle="#333";
+    ctx.font = "11px Microsoft YaHei";
+    let offset = idx * 20; // 错开标注
+    ctx.fillText("最大值:"+g.max, tx, y(g.max)+4 + offset);
+    ctx.fillText("Q3:"+g.Q3, tx, y(g.Q3)+4 + offset);
+    ctx.fillText("Q2:"+g.Q2, tx, y(g.Q2)+4 + offset);
+    ctx.fillText("Q1:"+g.Q1, tx, y(g.Q1)+4 + offset);
+    ctx.fillText("最小值:"+g.min, tx, y(g.min)+4 + offset);
+
+    // 底部组别（横轴标签）
+    ctx.textAlign = "center";
+    ctx.fillText("第"+(idx+1)+"组", cx, H - padBottom + 20);
+    ctx.textAlign = "left";
+  });
+
+  // 横轴
+  ctx.strokeStyle="#333";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padLeft, H - padBottom);
+  ctx.lineTo(W - padRight, H - padBottom);
+  ctx.stroke();
+}
+</script>
+</body>
+</html>
